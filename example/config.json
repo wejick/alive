@@ -2,6 +2,7 @@
     "tests" : [
         {
             "name" : "google.com 200",
+            "desc" : "",
             "domain" : "www.google.com",
             "endpoint" : "/",
             "method" : "GET",
@@ -11,6 +12,7 @@
         },
         {
             "name" : "google.com 404",
+            "desc" : "",
             "domain" : "www.google.com",
             "endpoint" : "/",
             "method" : "GET",
@@ -20,6 +22,7 @@
         },
         {
             "name" : "tokopedia.com success",
+            "desc" : "",
             "domain" : "www.tokopedia.com",
             "endpoint" : "/",
             "method" : "GET",

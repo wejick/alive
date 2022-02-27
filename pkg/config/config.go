@@ -10,6 +10,7 @@ type Config struct {
 }
 type Test struct {
 	Name               string `json:"name"`
+	Desc               string `json:"desc"`
 	Domain             string `json:"domain"`
 	Endpoint           string `json:"endpoint"`
 	Method             string `json:"method"`
