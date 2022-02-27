@@ -9,14 +9,15 @@ type Config struct {
 	Tests []Test `json:"tests"`
 }
 type Test struct {
-	Name               string `json:"name"`
-	Desc               string `json:"desc"`
-	Domain             string `json:"domain"`
-	Endpoint           string `json:"endpoint"`
-	Method             string `json:"method"`
-	Protocol           string `json:"protocol"`
-	PeriodInCron       string `json:"period_in_cron"`
-	ExpectedStatusCode int    `json:"expected_status_code"`
+	Name               string            `json:"name"`
+	Desc               string            `json:"desc"`
+	Domain             string            `json:"domain"`
+	Endpoint           string            `json:"endpoint"`
+	Method             string            `json:"method"`
+	Protocol           string            `json:"protocol"`
+	PeriodInCron       string            `json:"period_in_cron"`
+	Header             map[string]string `json:"headers"`
+	ExpectedStatusCode int               `json:"expected_status_code"`
 }
 
 // LoadConfig load config
