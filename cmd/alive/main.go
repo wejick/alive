@@ -11,8 +11,6 @@ import (
 	"github.com/wejick/alive/pkg/task/httptask"
 )
 
-var globalConfig config.Config
-
 func main() {
 	globalConfig, err := config.LoadConfig("./config.json")
 	if err != nil {
@@ -22,20 +20,18 @@ func main() {
 	fmt.Println("Config loaded")
 
 	// Create a new HTTP client with a default timeout
-	timeout := 1000 * time.Millisecond
+	timeout := 15000 * time.Millisecond
 	httpclt := httpclient.NewClient(httpclient.WithHTTPTimeout(timeout))
 
 	httpTaskList := constructTaskList(globalConfig.Tests, httpclt)
 
 	worker := cron.New()
-
 	for _, task := range httpTaskList {
-		worker.AddJob(task.PeriodInCron, task)
+		task.Property.WorkerID, _ = worker.AddJob(task.PeriodInCron, task)
 	}
 	worker.Start()
 
 	select {}
-
 }
 
 func constructTaskList(tests []config.Test, client *httpclient.Client) (taskList []*httptask.HttpTask) {

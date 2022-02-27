@@ -5,10 +5,12 @@ import (
 
 	"github.com/gojek/heimdall/v7/httpclient"
 	"github.com/wejick/alive/pkg/config"
+	"github.com/wejick/alive/pkg/task"
 )
 
 type HttpTask struct {
 	config.Test
+	task.Property
 	httpclient *httpclient.Client
 }
 
@@ -22,7 +24,7 @@ func NewHttpTask(test config.Test, client *httpclient.Client) *HttpTask {
 func (T *HttpTask) Run() {
 	res, _ := T.httpclient.Get(T.Protocol+"://"+T.Domain+T.Endpoint, nil)
 
-	fmt.Println("Run HttpTask : ", T.Test.Name)
+	fmt.Println("Run HttpTask : ", T.Test.Name, "WorkerID : ", T.Property.WorkerID)
 
 	if res.StatusCode != T.Test.ExpectedStatusCode {
 		fmt.Println("Failed, expected status code : ", T.Test.ExpectedStatusCode, " got : ", res.StatusCode)
