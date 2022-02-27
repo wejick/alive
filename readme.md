@@ -1,0 +1,2 @@
+# ALIVE
+Periodically test endpoint
