@@ -1,0 +1,31 @@
+{
+    "tests" : [
+        {
+            "name" : "google.com 200",
+            "domain" : "www.google.com",
+            "endpoint" : "/",
+            "method" : "GET",
+            "protocol" : "https",
+            "period_in_cron" : "@every 5s",
+            "expected_status_code" : 200
+        },
+        {
+            "name" : "google.com 404",
+            "domain" : "www.google.com",
+            "endpoint" : "/",
+            "method" : "GET",
+            "protocol" : "https",
+            "period_in_cron" : "@every 5s",
+            "expected_status_code" : 404
+        },
+        {
+            "name" : "tokopedia.com success",
+            "domain" : "www.tokopedia.com",
+            "endpoint" : "/",
+            "method" : "GET",
+            "protocol" : "https",
+            "period_in_cron" : "@every 5s",
+            "expected_status_code" : 200
+        }
+    ]
+}
