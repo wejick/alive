@@ -25,7 +25,22 @@ func NewHttpTask(test config.Test, client *httpclient.Client) *HttpTask {
 }
 
 func (T *HttpTask) Run() {
-	res, _ := T.httpclient.Get(constructURL(T.Protocol, T.Domain, T.Endpoint), T.header)
+	var req *http.Request
+	var errNewRequest error
+	switch T.Method {
+	case "GET":
+		req, errNewRequest = http.NewRequest(T.Method, constructURL(T.Protocol, T.Domain, T.Endpoint), nil)
+		req.Header = T.header
+	case "POST":
+
+	}
+
+	if errNewRequest != nil {
+		fmt.Println("couldn't create request ", T.Name)
+		return
+	}
+
+	res, _ := T.httpclient.Do(req)
 
 	fmt.Println(">> Run HttpTask : ", T.Test.Name, "WorkerID : ", T.Property.WorkerID)
 	fmt.Println("Headers : ", T.header)
