@@ -16,6 +16,7 @@ type Test struct {
 	Method             string            `json:"method"`
 	Protocol           string            `json:"protocol"`
 	PeriodInCron       string            `json:"period_in_cron"`
+	Body               string            `json:"body"`
 	Header             map[string]string `json:"headers"`
 	ExpectedStatusCode int               `json:"expected_status_code"`
 }

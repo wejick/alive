@@ -1,6 +1,7 @@
 package httptask
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 
@@ -28,11 +29,19 @@ func (T *HttpTask) Run() {
 	var req *http.Request
 	var errNewRequest error
 	switch T.Method {
+	case "DELETE":
+		fallthrough
 	case "GET":
 		req, errNewRequest = http.NewRequest(T.Method, constructURL(T.Protocol, T.Domain, T.Endpoint), nil)
 		req.Header = T.header
+	case "PATCH":
+		fallthrough
+	case "PUT":
+		fallthrough
 	case "POST":
-
+		bodyBuffer := bytes.NewBufferString(T.Body)
+		req, errNewRequest = http.NewRequest(T.Method, constructURL(T.Protocol, T.Domain, T.Endpoint), bodyBuffer)
+		req.Header = T.header
 	}
 
 	if errNewRequest != nil {
@@ -40,10 +49,16 @@ func (T *HttpTask) Run() {
 		return
 	}
 
-	res, _ := T.httpclient.Do(req)
+	res, errDo := T.httpclient.Do(req)
+	if errDo != nil {
+		fmt.Println("Failed to request : ", errDo)
+		return
+	}
 
 	fmt.Println(">> Run HttpTask : ", T.Test.Name, "WorkerID : ", T.Property.WorkerID)
-	fmt.Println("Headers : ", T.header)
+	// fmt.Println("Headers : ", T.header)
+	// body, _ := ioutil.ReadAll(res.Body)
+	// fmt.Println(string(body))
 
 	if res.StatusCode != T.Test.ExpectedStatusCode {
 		fmt.Println("Failed, expected status code : ", T.Test.ExpectedStatusCode, " got : ", res.StatusCode)
