@@ -6,7 +6,13 @@ import (
 )
 
 type Config struct {
+	Agent Agent  `json:"agent"`
 	Tests []Test `json:"tests"`
+}
+
+type Agent struct {
+	Location string `json:"location"`
+	ISP      string `json:"ISP"`
 }
 type Test struct {
 	Name               string            `json:"name"`

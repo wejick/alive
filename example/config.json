@@ -1,4 +1,8 @@
 {
+    "agent" : {
+        "location" : "jakarta",
+        "ISP" : "Indiehome"
+    },
     "tests" : [
         {
             "name" : "google.com 200",

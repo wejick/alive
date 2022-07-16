@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gojek/heimdall/v7/httpclient"
 	"github.com/wejick/alive/pkg/config"
+	"github.com/wejick/alive/pkg/metric"
 	"github.com/wejick/alive/pkg/task"
 )
 
@@ -17,16 +19,32 @@ type HttpTask struct {
 	header     http.Header
 }
 
-func NewHttpTask(test config.Test, client *httpclient.Client) *HttpTask {
+func NewHttpTask(agentcfg config.Agent, test config.Test, client *httpclient.Client, metricRuntime *metric.Metric) *HttpTask {
 	return &HttpTask{
 		Test:       test,
 		httpclient: client,
 		header:     constructHeader(test.Header),
+		Property: task.Property{
+			Location:      agentcfg.Location,
+			ISP:           agentcfg.ISP,
+			MetricRuntime: metricRuntime,
+		},
 	}
 }
 
 func (T *HttpTask) Run() {
+	// setup
 	var req *http.Request
+	var res *http.Response
+
+	// metric setup
+	start := time.Now()
+	defer func() {
+		duration := time.Since(start)
+		T.MetricRuntime.MeasureAPILatency(duration, T.Name, T.Domain, T.Method, T.Result, res.Status, T.Location, T.ISP)
+	}()
+
+	// run the request and test
 	var errNewRequest error
 	switch T.Method {
 	case "DELETE":
@@ -56,14 +74,14 @@ func (T *HttpTask) Run() {
 	}
 
 	fmt.Println(">> Run HttpTask : ", T.Test.Name, "WorkerID : ", T.Property.WorkerID)
-	// fmt.Println("Headers : ", T.header)
-	// body, _ := ioutil.ReadAll(res.Body)
-	// fmt.Println(string(body))
 
 	if res.StatusCode != T.Test.ExpectedStatusCode {
+		T.Result = "FAILED"
 		fmt.Println("Failed, expected status code : ", T.Test.ExpectedStatusCode, " got : ", res.StatusCode)
 		return
 	}
+
+	T.Result = "PASS"
 	fmt.Println("status code : ", res.Status)
 }
 
