@@ -1,6 +1,7 @@
 {
     "agent" : {
         "location" : "jakarta",
+        "geohash" : "qqguzgberuhd1",
         "ISP" : "Indiehome"
     },
     "tests" : [

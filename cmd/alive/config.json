@@ -1,6 +1,7 @@
 {
     "agent" : {
         "location" : "jakarta",
+        "geohash" : "qqguzgberuhd1",
         "ISP" : "Indiehome"
     },
     "tests" : [
@@ -39,7 +40,7 @@
             "endpoint" : "/delete",
             "method" : "DELETE",
             "protocol" : "https",
-            "period_in_cron" : "@every 2s",
+            "period_in_cron" : "@every 1m",
             "headers": {
                 "Content-Type" : "application/x-www-form-urlencoded",
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0"

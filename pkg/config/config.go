@@ -12,6 +12,7 @@ type Config struct {
 
 type Agent struct {
 	Location string `json:"location"`
+	GeoHash  string `json:"geohash"`
 	ISP      string `json:"ISP"`
 }
 type Test struct {

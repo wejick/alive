@@ -26,6 +26,7 @@ func NewHttpTask(agentcfg config.Agent, test config.Test, client *httpclient.Cli
 		header:     constructHeader(test.Header),
 		Property: task.Property{
 			Location:      agentcfg.Location,
+			GeoHash:       agentcfg.GeoHash,
 			ISP:           agentcfg.ISP,
 			MetricRuntime: metricRuntime,
 		},
@@ -40,8 +41,11 @@ func (T *HttpTask) Run() {
 	// metric setup
 	start := time.Now()
 	defer func() {
-		duration := time.Since(start)
-		T.MetricRuntime.MeasureAPILatency(duration, T.Name, T.Domain, T.Method, T.Result, res.Status, T.Location, T.ISP)
+		status := ""
+		if res != nil {
+			status = res.Status
+		}
+		T.measureLatency(time.Since(start), status)
 	}()
 
 	// run the request and test
@@ -83,6 +87,10 @@ func (T *HttpTask) Run() {
 
 	T.Result = "PASS"
 	fmt.Println("status code : ", res.Status)
+}
+
+func (T *HttpTask) measureLatency(duration time.Duration, status string) {
+	T.MetricRuntime.MeasureAPILatency(duration, T.Name, T.Domain, T.Method, T.Result, status, T.Location, T.GeoHash, T.ISP)
 }
 
 const protocolshebang = "://"

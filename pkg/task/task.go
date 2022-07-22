@@ -8,6 +8,7 @@ import (
 type Property struct {
 	ID            string
 	Location      string
+	GeoHash       string
 	ISP           string
 	Result        string
 	Status        int

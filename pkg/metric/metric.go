@@ -24,6 +24,7 @@ func New() (M *Metric) {
 		"test_result",
 		"http_code",
 		"location",
+		"geohash",
 		"ISP",
 	}
 
