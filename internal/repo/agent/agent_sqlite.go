@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -43,7 +44,7 @@ func (A *AgentSqlite) GetAgents(agentIDs ...string) (agentList []modelAgent.Agen
 	// TODO : use prepared statement to avoid sql injection
 	rows, err := A.db.Query(query)
 	if err != nil {
-		fmt.Errorf("%v", err)
+		fmt.Printf("%v", err)
 		return
 	}
 	defer rows.Close()
@@ -52,6 +53,20 @@ func (A *AgentSqlite) GetAgents(agentIDs ...string) (agentList []modelAgent.Agen
 		rows.Scan(&agent.ID, &agent.Location, &agent.GeoHash, &agent.ISP)
 		agentList = append(agentList, agent)
 	}
+
+	return
+}
+
+// AddAgent add 1 agent at a time to db
+func (A *AgentSqlite) AddAgent(agent modelAgent.Agent) (err error) {
+	query := "INSERT INTO agent(location, geohash, ISP) VALUES(?,?,?)"
+
+	tx, err := A.db.BeginTx(context.Background(), nil)
+	if err != nil {
+		return
+	}
+	_, err = tx.Exec(query, agent.Location, agent.GeoHash, agent.ISP)
+	tx.Commit()
 
 	return
 }
