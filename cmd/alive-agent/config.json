@@ -1,0 +1,79 @@
+{
+    "agent" : {
+        "location" : "jakarta",
+        "geohash" : "qqguzgberuhd1",
+        "ISP" : "Indiehome"
+    },
+    "tests" : [
+        {
+            "name" : "google.com 200",
+            "desc" : "",
+            "domain" : "www.google.com",
+            "endpoint" : "/",
+            "method" : "GET",
+            "protocol" : "https",
+            "period_in_cron" : "@every 1m",
+            "expected_status_code" : 200,
+            "headers": {
+                "content-type" : "text/html; charset=utf-8"
+            }
+        },
+        {
+            "name" : "postman echo post",
+            "desc" : "",
+            "domain" : "postman-echo.com",
+            "endpoint" : "/post",
+            "method" : "POST",
+            "protocol" : "https",
+            "period_in_cron" : "@every 1m",
+            "expected_status_code" : 200,
+            "headers": {
+                "Content-Type" : "application/x-www-form-urlencoded",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0"
+            },
+            "body" : "baju=tidur"
+        },
+        {
+            "name" : "postman echo delete",
+            "desc" : "",
+            "domain" : "postman-echo.com",
+            "endpoint" : "/delete",
+            "method" : "DELETE",
+            "protocol" : "https",
+            "period_in_cron" : "@every 1m",
+            "headers": {
+                "Content-Type" : "application/x-www-form-urlencoded",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0"
+            },
+            "expected_status_code" : 200
+        },
+        {
+            "name" : "postman echo patch",
+            "desc" : "",
+            "domain" : "postman-echo.com",
+            "endpoint" : "/patch",
+            "method" : "PATCH",
+            "protocol" : "https",
+            "period_in_cron" : "@every 1m",
+            "headers": {
+                "Content-Type" : "application/x-www-form-urlencoded",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0"
+            },
+            "expected_status_code" : 200
+        },
+        {
+            "name" : "postman echo put",
+            "desc" : "",
+            "domain" : "postman-echo.com",
+            "endpoint" : "/put",
+            "method" : "PUT",
+            "protocol" : "https",
+            "period_in_cron" : "@every 1m",
+            "headers": {
+                "Content-Type" : "application/x-www-form-urlencoded",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0"
+            },
+            "expected_status_code" : 200
+        }
+    ]
+}

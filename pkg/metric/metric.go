@@ -55,7 +55,7 @@ func (M *Metric) Init() {
 }
 
 // MeasureAPILatency use this to measure API latency
-// label are "domain", "method", "test_result", "http_code", "location", "ISP"
+// label are "domain", "method", "test_result", "http_code", "location", "geohash", "ISP"
 func (M *Metric) MeasureAPILatency(latency time.Duration, labels ...string) {
 	M.latencyAPIHistogram.WithLabelValues(labels...).Observe(latency.Seconds())
 	M.latencyAPIGauge.WithLabelValues(labels...).Set(latency.Seconds())
