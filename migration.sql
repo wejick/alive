@@ -18,6 +18,6 @@ CREATE TABLE IF NOT EXISTS test (
     body TEXT NOT NULL,
     header TEXT NOT NULL,
     agent TEXT NOT NULL,
-    expected_status_code TEXT NOT NULL,
-    status TEXT NOT NULL
+    expected_status_code INTEGER NOT NULL,
+    status INTEGER NOT NULL
 )

@@ -9,3 +9,16 @@ INSERT INTO agent(location,geohash,ISP) VALUES("Surabaya", "qw8ntwzd4j4mj","Indi
 INSERT INTO agent(location,geohash,ISP) VALUES("Surabaya", "qw8ntwzd4j4mj","Indosat");
 INSERT INTO agent(location,geohash,ISP) VALUES("Surabaya", "qw8ntwzd4j4mj","Telkomsel");
 INSERT INTO agent(location,geohash,ISP) VALUES("Surabaya", "qw8ntwzd4j4mj","XL");
+
+INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status)
+    VALUES("DESC","NAME","DOMAIN","ENDPOINT","METHOD","PROTOCOL","PERIOD_IN_CRON","BODY","HEADER",
+    "AGENT",200,1);
+INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status)
+    VALUES("DESC","NAME","DOMAIN","ENDPOINT","METHOD","PROTOCOL","PERIOD_IN_CRON","BODY","HEADER",
+    "AGENT",200,1);
+INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status)
+    VALUES("DESC","NAME","DOMAIN","ENDPOINT","METHOD","PROTOCOL","PERIOD_IN_CRON","BODY","HEADER",
+    "AGENT",200,1);
+INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status)
+    VALUES("DESC","NAME","DOMAIN","ENDPOINT","METHOD","PROTOCOL","PERIOD_IN_CRON","BODY","HEADER",
+    "AGENT",200,1);

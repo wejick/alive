@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	modelAgent "github.com/wejick/alive/internal/model/agent"
 
@@ -26,14 +27,7 @@ func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []modelAgent.Agent
 	agentList = []modelAgent.Agent{}
 	query := ""
 
-	idcommaseparated := ""
-	for idx, id := range agentIDs {
-		if idx == 0 {
-			idcommaseparated = id
-		} else {
-			idcommaseparated = id + "," + idcommaseparated
-		}
-	}
+	idcommaseparated := strings.Join(agentIDs[:], ",")
 
 	if len(agentIDs) > 0 && agentIDs[0] != "" {
 		query = fmt.Sprintf("SELECT * FROM agent where id in (%s)", idcommaseparated)

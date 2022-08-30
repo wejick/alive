@@ -1,18 +1,18 @@
 package test
 
-// Test is representing test data of API monitoring
+// Test representing testcase in alive
 type Test struct {
-	ID                 string            `json:"id"`
-	Name               string            `json:"name"`
-	Desc               string            `json:"desc"`
-	Domain             string            `json:"domain"`
-	Endpoint           string            `json:"endpoint"`
-	Method             string            `json:"method"`
-	Protocol           string            `json:"protocol"`
-	PeriodInCron       string            `json:"period_in_cron"`
-	Body               string            `json:"body"`
-	Header             map[string]string `json:"headers"`
-	Agent              []string          `json:"agents"`
-	ExpectedStatusCode int               `json:"expected_status_code"`
-	Status             bool              `json:"status"`
+	ID                 int64  `json:"id"`
+	Name               string `json:"name"`
+	Desc               string `json:"desc"`
+	Domain             string `json:"domain"`
+	Endpoint           string `json:"endpoint"`
+	Method             string `json:"method"`
+	Protocol           string `json:"protocol"`
+	PeriodInCron       string `json:"period_in_cron"`
+	Body               string `json:"body"`
+	Header             string `json:"headers"`
+	Agent              string `json:"agent"`
+	ExpectedStatusCode int    `json:"expected_status_code"`
+	Status             int    `json:"status"`
 }
