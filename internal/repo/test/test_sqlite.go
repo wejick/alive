@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -48,11 +49,22 @@ func (T *TestSqlite) GetTest(IDs []string, rows, offset int) (testlist []modelTe
 	return
 }
 
-func (T *TestSqlite) AddTest(modelTest.Test) (err error) {
+func (T *TestSqlite) AddTest(test modelTest.Test) (err error) {
+	query := "INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
+	tx, err := T.db.BeginTx(context.Background(), nil)
+	if err != nil {
+		return
+	}
+	_, err = tx.Exec(query, test.Desc, test.Name, test.Domain, test.Endpoint, test.Method, test.Protocol, test.PeriodInCron, test.Body,
+		test.Header, test.Agent, test.ExpectedStatusCode, test.Status)
+	tx.Commit()
 
 	return
 }
 
 func (T *TestSqlite) GetTotalTest() (total int64, err error) {
+	row := T.db.QueryRow("SELECT COUNT(id) FROM test")
+	err = row.Scan(&total)
+
 	return
 }
