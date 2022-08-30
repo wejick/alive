@@ -33,7 +33,7 @@ func (A *Agent) GetAgentHandler(w http.ResponseWriter, r *http.Request, ps httpr
 	ids := strings.Split(idstring, ",")
 
 	agentResponse := AgentHttpResponse{}
-	agentResponse.AgentList = A.AgentService.GetAgents(ids...)
+	agentResponse.AgentList = A.AgentService.GetAgents(ids)
 
 	httputil.ResponseJSON(agentResponse, 200, w)
 }
@@ -51,5 +51,4 @@ func (A *Agent) AddAgentHandler(w http.ResponseWriter, r *http.Request, ps httpr
 	} else {
 		httputil.ResponseError("", http.StatusAccepted, w)
 	}
-
 }

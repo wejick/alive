@@ -48,7 +48,7 @@ func TestAgentSqlite_GetAgents(t *testing.T) {
 			A := &AgentSqlite{
 				db: tt.fields.db,
 			}
-			if gotAgentList := A.GetAgents(tt.args.agentIDs...); !reflect.DeepEqual(gotAgentList, tt.wantAgentList) {
+			if gotAgentList := A.GetAgents(tt.args.agentIDs); !reflect.DeepEqual(gotAgentList, tt.wantAgentList) {
 				t.Errorf("AgentSqlite.GetAgents() = %v, want %v", gotAgentList, tt.wantAgentList)
 			}
 		})

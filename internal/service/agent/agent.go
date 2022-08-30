@@ -15,8 +15,8 @@ func New(agentRepo repoAgent.IAgent) *Agent {
 	}
 }
 
-func (A *Agent) GetAgents(agentIDs ...string) (agentList []modelAgent.Agent) {
-	return A.agentRepo.GetAgents(agentIDs...)
+func (A *Agent) GetAgents(agentIDs []string) (agentList []modelAgent.Agent) {
+	return A.agentRepo.GetAgents(agentIDs)
 }
 
 func (A *Agent) AddAgent(agent modelAgent.Agent) (err error) {

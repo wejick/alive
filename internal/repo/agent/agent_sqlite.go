@@ -22,7 +22,7 @@ func NewSqlite(sqliteDB *sql.DB) (agent *AgentSqlite) {
 }
 
 // GetAgents get 1 or more agent by id, empty array means get all agent
-func (A *AgentSqlite) GetAgents(agentIDs ...string) (agentList []modelAgent.Agent) {
+func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []modelAgent.Agent) {
 	agentList = []modelAgent.Agent{}
 	query := ""
 
