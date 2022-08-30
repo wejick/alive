@@ -15,7 +15,7 @@ type AgentSqlite struct {
 	db *sql.DB
 }
 
-func New(filePath string, sqliteDB *sql.DB) (agent *AgentSqlite) {
+func NewSqlite(sqliteDB *sql.DB) (agent *AgentSqlite) {
 	agent = &AgentSqlite{db: sqliteDB}
 
 	return
@@ -35,7 +35,7 @@ func (A *AgentSqlite) GetAgents(agentIDs ...string) (agentList []modelAgent.Agen
 		}
 	}
 
-	if len(agentIDs) > 0 {
+	if len(agentIDs) > 0 && agentIDs[0] != "" {
 		query = fmt.Sprintf("SELECT * FROM agent where id in (%s)", idcommaseparated)
 	} else {
 		query = "SELECT * FROM agent"
@@ -48,7 +48,7 @@ func (A *AgentSqlite) GetAgents(agentIDs ...string) (agentList []modelAgent.Agen
 		return
 	}
 	defer rows.Close()
-	if rows.Next() {
+	for rows.Next() {
 		agent := modelAgent.Agent{}
 		rows.Scan(&agent.ID, &agent.Location, &agent.GeoHash, &agent.ISP)
 		agentList = append(agentList, agent)
