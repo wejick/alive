@@ -29,7 +29,7 @@ func New(service *serviceAgent.Agent) *Agent {
 // GetAgentHandler http handler for get agent
 // param: id = list of id to get. empty means get all agents
 func (A *Agent) GetAgentHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	idstring := ps.ByName("id")
+	idstring := r.URL.Query().Get("id")
 	ids := strings.Split(idstring, ",")
 
 	agentResponse := AgentHttpResponse{}

@@ -3,3 +3,7 @@ reset-dummy-data:
 
 test:
 	go test ./...
+
+run-server:
+	go build ./cmd/alive-server
+	./alive-server
