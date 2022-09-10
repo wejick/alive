@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	modelAgent "github.com/wejick/alive/internal/model/agent"
-
+	model "github.com/wejick/alive/internal/model"
 	_ "modernc.org/sqlite"
 )
 
@@ -23,8 +22,8 @@ func NewSqlite(sqliteDB *sql.DB) (agent *AgentSqlite) {
 }
 
 // GetAgents get 1 or more agent by id, empty array means get all agent
-func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []modelAgent.Agent) {
-	agentList = []modelAgent.Agent{}
+func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []model.Agent) {
+	agentList = []model.Agent{}
 	query := ""
 
 	idcommaseparated := strings.Join(agentIDs[:], ",")
@@ -43,7 +42,7 @@ func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []modelAgent.Agent
 	}
 	defer rows.Close()
 	for rows.Next() {
-		agent := modelAgent.Agent{}
+		agent := model.Agent{}
 		rows.Scan(&agent.ID, &agent.Location, &agent.GeoHash, &agent.ISP)
 		agentList = append(agentList, agent)
 	}
@@ -52,7 +51,7 @@ func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []modelAgent.Agent
 }
 
 // AddAgent add 1 agent at a time to db
-func (A *AgentSqlite) AddAgent(agent modelAgent.Agent) (err error) {
+func (A *AgentSqlite) AddAgent(agent model.Agent) (err error) {
 	query := "INSERT INTO agent(location, geohash, ISP) VALUES(?,?,?)"
 
 	tx, err := A.db.BeginTx(context.Background(), nil)

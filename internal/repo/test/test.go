@@ -1,11 +1,11 @@
 package test
 
 import (
-	modelTest "github.com/wejick/alive/internal/model/test"
+	model "github.com/wejick/alive/internal/model"
 )
 
 type Itest interface {
-	GetTest(IDs []string, agent string, rows, offset int) ([]modelTest.Test, error)
+	GetTest(IDs []string, agent string, rows, offset int) ([]model.Test, error)
 	GetTotalTest() (int64, error)
-	AddTest(modelTest.Test) error
+	AddTest(model.Test) error
 }

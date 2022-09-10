@@ -7,10 +7,9 @@ import (
 
 	"github.com/gojek/heimdall/v7/httpclient"
 	testEndpoint "github.com/wejick/alive/internal/endpoint/test"
-	testModel "github.com/wejick/alive/internal/model/test"
+	model "github.com/wejick/alive/internal/model"
 
 	agentEndpoint "github.com/wejick/alive/internal/endpoint/agent"
-	agentModel "github.com/wejick/alive/internal/model/agent"
 )
 
 type ConfigLoader struct {
@@ -96,7 +95,7 @@ func (C *ConfigLoader) GetTestConfigByAgent(AgentID string) (testConfig []Test, 
 		return
 	}
 	json.NewDecoder(resp.Body).Decode(&testResp)
-	testConfig = testModeltoTestConfig(testResp.TestList)
+	testConfig = modeltoTestConfig(testResp.TestList)
 	return
 }
 
@@ -108,11 +107,11 @@ func (C *ConfigLoader) GetAgentConfig(AgentID string) (agentConfig Agent, err er
 		return
 	}
 	json.NewDecoder(resp.Body).Decode(&agentResponse)
-	agentConfig = agentModeltoAgentConfig(agentResponse.AgentList)
+	agentConfig = modeltoAgentConfig(agentResponse.AgentList)
 	return
 }
 
-func testModeltoTestConfig(testList []testModel.Test) (testConfig []Test) {
+func modeltoTestConfig(testList []model.Test) (testConfig []Test) {
 	for idx, testM := range testList {
 		testConfig = append(testConfig, Test{
 			Name:               testM.Name,
@@ -130,7 +129,7 @@ func testModeltoTestConfig(testList []testModel.Test) (testConfig []Test) {
 	return
 }
 
-func agentModeltoAgentConfig(agentList []agentModel.Agent) (agentConfig Agent) {
+func modeltoAgentConfig(agentList []model.Agent) (agentConfig Agent) {
 	if len(agentList) == 0 {
 		return
 	}

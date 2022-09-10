@@ -1,7 +1,7 @@
 package test
 
 import (
-	modelTest "github.com/wejick/alive/internal/model/test"
+	model "github.com/wejick/alive/internal/model"
 	repoTest "github.com/wejick/alive/internal/repo/test"
 )
 
@@ -18,7 +18,7 @@ func New(testRepo repoTest.Itest) *Test {
 //GetTest get test data by id or by pagination.
 // if IDs are provided, agent, rows and page will be ignored
 // page started from 1
-func (T *Test) GetTest(IDs []string, agent string, rows, page int64) (testlist []modelTest.Test, err error) {
+func (T *Test) GetTest(IDs []string, agent string, rows, page int64) (testlist []model.Test, err error) {
 	offset := rows * page
 	testlist, err = T.testRepo.GetTest(IDs, agent, int(rows), int(offset))
 
@@ -29,6 +29,6 @@ func (T *Test) GetTotalTest() (total int64, err error) {
 	return T.testRepo.GetTotalTest()
 }
 
-func (T *Test) AddTest(test modelTest.Test) (err error) {
+func (T *Test) AddTest(test model.Test) (err error) {
 	return T.testRepo.AddTest(test)
 }

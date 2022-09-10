@@ -1,7 +1,7 @@
 package agent
 
 import (
-	modelAgent "github.com/wejick/alive/internal/model/agent"
+	model "github.com/wejick/alive/internal/model"
 	repoAgent "github.com/wejick/alive/internal/repo/agent"
 )
 
@@ -15,10 +15,10 @@ func New(agentRepo repoAgent.IAgent) *Agent {
 	}
 }
 
-func (A *Agent) GetAgents(agentIDs []string) (agentList []modelAgent.Agent) {
+func (A *Agent) GetAgents(agentIDs []string) (agentList []model.Agent) {
 	return A.agentRepo.GetAgents(agentIDs)
 }
 
-func (A *Agent) AddAgent(agent modelAgent.Agent) (err error) {
+func (A *Agent) AddAgent(agent model.Agent) (err error) {
 	return A.agentRepo.AddAgent(agent)
 }

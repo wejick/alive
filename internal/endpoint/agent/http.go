@@ -8,7 +8,7 @@ import (
 	"github.com/wejick/alive/pkg/httputil"
 
 	"github.com/julienschmidt/httprouter"
-	modelAgent "github.com/wejick/alive/internal/model/agent"
+	model "github.com/wejick/alive/internal/model"
 	serviceAgent "github.com/wejick/alive/internal/service/agent"
 )
 
@@ -17,7 +17,7 @@ type Agent struct {
 }
 
 type AgentHttpResponse struct {
-	AgentList []modelAgent.Agent `json:"agent_list"`
+	AgentList []model.Agent `json:"agent_list"`
 }
 
 func New(service *serviceAgent.Agent) *Agent {
@@ -41,7 +41,7 @@ func (A *Agent) GetAgentHandler(w http.ResponseWriter, r *http.Request, ps httpr
 // AddAgentHandler http handler for add agent
 // param: json of agent
 func (A *Agent) AddAgentHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	agentParam := modelAgent.Agent{}
+	agentParam := model.Agent{}
 	json.NewDecoder(r.Body).Decode(&agentParam)
 
 	err := A.AgentService.AddAgent(agentParam)

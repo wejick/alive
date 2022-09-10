@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	modelTest "github.com/wejick/alive/internal/model/test"
+	model "github.com/wejick/alive/internal/model"
 	_ "modernc.org/sqlite"
 )
 
@@ -33,7 +33,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 		name         string
 		fields       fields
 		args         args
-		wantTestlist []modelTest.Test
+		wantTestlist []model.Test
 		wantErr      bool
 	}{
 		{
@@ -44,7 +44,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 			args: args{
 				IDs: []string{"1"},
 			},
-			wantTestlist: []modelTest.Test{
+			wantTestlist: []model.Test{
 				{ID: 1, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
 			},
@@ -57,7 +57,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 			args: args{
 				IDs: []string{"1", "2"},
 			},
-			wantTestlist: []modelTest.Test{
+			wantTestlist: []model.Test{
 				{ID: 1, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
 				{ID: 2, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
@@ -73,7 +73,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 				rows:   2,
 				offset: 0,
 			},
-			wantTestlist: []modelTest.Test{
+			wantTestlist: []model.Test{
 				{ID: 1, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
 				{ID: 2, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
@@ -89,7 +89,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 				rows:   2,
 				offset: 2,
 			},
-			wantTestlist: []modelTest.Test{
+			wantTestlist: []model.Test{
 				{ID: 3, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
 				{ID: 4, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
@@ -105,7 +105,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 				rows:  1,
 				agent: "AGENT00",
 			},
-			wantTestlist: []modelTest.Test{
+			wantTestlist: []model.Test{
 				{ID: 5, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 					Body: "BODY", Header: "HEADER", Agent: "AGENT00", ExpectedStatusCode: 200, Status: 1},
 			},
@@ -120,7 +120,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 				agent:  "AGENT00",
 				offset: 1,
 			},
-			wantTestlist: []modelTest.Test{
+			wantTestlist: []model.Test{
 				{ID: 6, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 					Body: "BODY", Header: "HEADER", Agent: "AGENT00", ExpectedStatusCode: 200, Status: 1},
 			},
@@ -162,7 +162,7 @@ func TestTestSqlite_GetTotalTest(t *testing.T) {
 		{
 			name:      "get total",
 			fields:    fields{db: sqldb},
-			wantTotal: 4,
+			wantTotal: 7,
 		},
 	}
 	for _, tt := range tests {
@@ -193,23 +193,23 @@ func TestTestSqlite_AddTest(t *testing.T) {
 		db *sql.DB
 	}
 	type args struct {
-		test modelTest.Test
+		test model.Test
 	}
 	tests := []struct {
 		name       string
 		fields     fields
 		args       args
-		wantResult []modelTest.Test
+		wantResult []model.Test
 		wantErr    bool
 	}{
 		{
 			name:   "add simple",
 			fields: fields{db: sqldb},
 			args: args{
-				test: modelTest.Test{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
+				test: model.Test{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
 			},
-			wantResult: []modelTest.Test{{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
+			wantResult: []model.Test{{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
 				Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1}},
 		},
 	}

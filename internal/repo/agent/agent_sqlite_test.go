@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	modelAgent "github.com/wejick/alive/internal/model/agent"
+	model "github.com/wejick/alive/internal/model"
 	_ "modernc.org/sqlite"
 )
 
@@ -28,13 +28,13 @@ func TestAgentSqlite_GetAgents(t *testing.T) {
 		name          string
 		fields        fields
 		args          args
-		wantAgentList []modelAgent.Agent
+		wantAgentList []model.Agent
 	}{
 		{
 			name:   "select 1",
 			fields: fields{db: sqldb},
 			args:   args{agentIDs: []string{"1"}},
-			wantAgentList: []modelAgent.Agent{
+			wantAgentList: []model.Agent{
 				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome"},
 			},
 		},
@@ -42,7 +42,7 @@ func TestAgentSqlite_GetAgents(t *testing.T) {
 			name:   "select 1 , 2",
 			fields: fields{db: sqldb},
 			args:   args{agentIDs: []string{"1", "2"}},
-			wantAgentList: []modelAgent.Agent{
+			wantAgentList: []model.Agent{
 				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome"},
 				{ID: 2, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indosat"},
 			},
@@ -50,7 +50,7 @@ func TestAgentSqlite_GetAgents(t *testing.T) {
 		{
 			name:   "select",
 			fields: fields{db: sqldb},
-			wantAgentList: []modelAgent.Agent{
+			wantAgentList: []model.Agent{
 				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome"},
 				{ID: 2, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indosat"},
 				{ID: 3, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Telkomsel"},
@@ -85,7 +85,7 @@ func TestAgentSqlite_AddAgent(t *testing.T) {
 		db *sql.DB
 	}
 	type args struct {
-		agent modelAgent.Agent
+		agent model.Agent
 	}
 	tests := []struct {
 		name    string
@@ -96,7 +96,7 @@ func TestAgentSqlite_AddAgent(t *testing.T) {
 		{
 			name:   "select 1",
 			fields: fields{db: sqldb},
-			args: args{agent: modelAgent.Agent{
+			args: args{agent: model.Agent{
 				Location: "kediri",
 				GeoHash:  "yyyykdr",
 				ISP:      "kediri net",

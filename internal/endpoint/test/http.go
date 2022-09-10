@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
-	modelTest "github.com/wejick/alive/internal/model/test"
+	model "github.com/wejick/alive/internal/model"
 	serviceTest "github.com/wejick/alive/internal/service/test"
 	"github.com/wejick/alive/pkg/httputil"
 )
@@ -17,7 +17,7 @@ type Test struct {
 }
 
 type TestHttpResponse struct {
-	TestList []modelTest.Test `json:"test_list"`
+	TestList []model.Test `json:"test_list"`
 }
 
 func New(testService *serviceTest.Test) *Test {
@@ -49,7 +49,7 @@ func (T *Test) GetTestHandler(w http.ResponseWriter, r *http.Request, ps httprou
 }
 
 func (T *Test) AddTestHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	testParam := modelTest.Test{}
+	testParam := model.Test{}
 	json.NewDecoder(r.Body).Decode(&testParam)
 
 	err := T.testService.AddTest(testParam)

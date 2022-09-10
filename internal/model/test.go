@@ -1,4 +1,4 @@
-package test
+package model
 
 // Test representing testcase in alive
 type Test struct {

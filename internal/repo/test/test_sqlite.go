@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	modelTest "github.com/wejick/alive/internal/model/test"
+	model "github.com/wejick/alive/internal/model"
 	_ "modernc.org/sqlite"
 )
 
@@ -23,7 +23,7 @@ func NewSqlite(sqliteDB *sql.DB) (test *TestSqlite) {
 
 // GetTest get test configuration by id or by pagination.
 // if IDs are provided, rows and offset will be ignored
-func (T *TestSqlite) GetTest(IDs []string, agent string, rows, offset int) (testlist []modelTest.Test, err error) {
+func (T *TestSqlite) GetTest(IDs []string, agent string, rows, offset int) (testlist []model.Test, err error) {
 	query := ""
 	paging := ""
 	agentQ := ""
@@ -48,7 +48,7 @@ func (T *TestSqlite) GetTest(IDs []string, agent string, rows, offset int) (test
 	defer dbRows.Close()
 
 	for dbRows.Next() {
-		item := modelTest.Test{}
+		item := model.Test{}
 		dbRows.Scan(&item.ID, &item.Desc, &item.Name, &item.Domain, &item.Endpoint, &item.Method, &item.Protocol, &item.PeriodInCron, &item.Body,
 			&item.Header, &item.Agent, &item.ExpectedStatusCode, &item.Status)
 
@@ -58,7 +58,7 @@ func (T *TestSqlite) GetTest(IDs []string, agent string, rows, offset int) (test
 	return
 }
 
-func (T *TestSqlite) AddTest(test modelTest.Test) (err error) {
+func (T *TestSqlite) AddTest(test model.Test) (err error) {
 	query := "INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
 	tx, err := T.db.BeginTx(context.Background(), nil)
 	if err != nil {

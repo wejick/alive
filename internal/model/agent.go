@@ -1,4 +1,4 @@
-package agent
+package model
 
 // Agent is representing agent in the alive system
 type Agent struct {
