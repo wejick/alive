@@ -22,12 +22,22 @@ func main() {
 	}
 	fmt.Println("Config loaded")
 
-	cfgLoader := config.NewHTTPConfigLoader("http://localhost:8081", "1")
-	conf, err := cfgLoader.GetConfigFromServer()
-	if err != nil {
-		return
+	cfgLoader := config.NewHTTPConfigLoader(globalConfig.ServerAddress, "1")
+
+	httpConfigLoaderFunc := func() {
+		conf, err := cfgLoader.GetConfigFromServer()
+		if err != nil {
+			return
+		}
+		globalConfig.Agent = conf.Agent
+		globalConfig.Tests = conf.Tests
+
+		fmt.Println("Config fetched from :", globalConfig.ServerAddress)
 	}
-	fmt.Println(conf)
+	httpConfigLoaderFunc()
+	c := cron.New()
+	c.AddFunc("@every 30s", httpConfigLoaderFunc)
+	c.Start()
 
 	metricRuntime := metric.New()
 

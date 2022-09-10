@@ -32,7 +32,7 @@ func (T *Test) GetTestHandler(w http.ResponseWriter, r *http.Request, ps httprou
 
 	rowsStr := r.URL.Query().Get("rows")
 	pageStr := r.URL.Query().Get("page")
-	agentStr := r.URL.Query().Get("agent")
+	agentStr := r.URL.Query().Get("agentid")
 
 	rows, _ := strconv.Atoi(rowsStr)
 	page, _ := strconv.Atoi(pageStr)

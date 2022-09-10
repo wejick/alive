@@ -19,7 +19,7 @@ type ConfigLoader struct {
 }
 
 type Config struct {
-	ServerAddress string `json:"server_address"`
+	ServerAddress string `json:"server-address"`
 	Agent         Agent  `json:"agent"`
 	Tests         []Test `json:"tests"`
 }
@@ -90,7 +90,7 @@ func (C *ConfigLoader) GetConfigFromServer() (config Config, err error) {
 // GetTestConfigByClient getting test config from server
 func (C *ConfigLoader) GetTestConfigByAgent(AgentID string) (testConfig []Test, err error) {
 	testResp := testEndpoint.TestHttpResponse{}
-	resp, err := C.httpclient.Get(C.serverAddress+testConfigPath+"?agent="+AgentID, nil)
+	resp, err := C.httpclient.Get(C.serverAddress+testConfigPath+"?agentid="+AgentID, nil)
 	if err != nil {
 		return
 	}
@@ -124,7 +124,7 @@ func modeltoTestConfig(testList []model.Test) (testConfig []Test) {
 			Body:               testM.Body,
 			ExpectedStatusCode: testM.ExpectedStatusCode,
 		})
-		json.Unmarshal([]byte(testM.Header), testConfig[idx].Header)
+		json.Unmarshal([]byte(testM.Header), &testConfig[idx].Header)
 	}
 	return
 }
