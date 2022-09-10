@@ -22,6 +22,13 @@ func main() {
 	}
 	fmt.Println("Config loaded")
 
+	cfgLoader := config.NewHTTPConfigLoader("http://localhost:8081", "1")
+	conf, err := cfgLoader.GetConfigFromServer()
+	if err != nil {
+		return
+	}
+	fmt.Println(conf)
+
 	metricRuntime := metric.New()
 
 	// Create a new HTTP client with a default timeout

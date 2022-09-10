@@ -3,11 +3,26 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"time"
+
+	"github.com/gojek/heimdall/v7/httpclient"
+	testEndpoint "github.com/wejick/alive/internal/endpoint/test"
+	testModel "github.com/wejick/alive/internal/model/test"
+
+	agentEndpoint "github.com/wejick/alive/internal/endpoint/agent"
+	agentModel "github.com/wejick/alive/internal/model/agent"
 )
 
+type ConfigLoader struct {
+	httpclient    *httpclient.Client
+	serverAddress string
+	agentName     string
+}
+
 type Config struct {
-	Agent Agent  `json:"agent"`
-	Tests []Test `json:"tests"`
+	ServerAddress string `json:"server_address"`
+	Agent         Agent  `json:"agent"`
+	Tests         []Test `json:"tests"`
 }
 
 type Agent struct {
@@ -15,6 +30,7 @@ type Agent struct {
 	GeoHash  string `json:"geohash"`
 	ISP      string `json:"ISP"`
 }
+
 type Test struct {
 	Name               string            `json:"name"`
 	Desc               string            `json:"desc"`
@@ -28,6 +44,23 @@ type Test struct {
 	ExpectedStatusCode int               `json:"expected_status_code"`
 }
 
+const agentConfigPath = "/config/agent"
+const testConfigPath = "/config/test"
+
+func NewHTTPConfigLoader(serverAddress string, agentName string) (loader *ConfigLoader) {
+	// Create a new HTTP client with a default timeout
+	timeout := 15000 * time.Millisecond
+	httpclt := httpclient.NewClient(httpclient.WithHTTPTimeout(timeout))
+
+	loader = &ConfigLoader{
+		httpclient:    httpclt,
+		serverAddress: serverAddress,
+		agentName:     agentName,
+	}
+
+	return
+}
+
 // LoadConfig load config
 func LoadConfig(path string) (config Config, err error) {
 	F, err := os.Open(path)
@@ -38,6 +71,72 @@ func LoadConfig(path string) (config Config, err error) {
 
 	jsonDecoder := json.NewDecoder(F)
 	jsonDecoder.Decode(&config)
+
+	return
+}
+
+// GetConfigFromServer getting whole config from server
+func (C *ConfigLoader) GetConfigFromServer() (config Config, err error) {
+	config.Agent, err = C.GetAgentConfig(C.agentName)
+	if err != nil {
+		return
+	}
+	config.Tests, err = C.GetTestConfigByAgent(C.agentName)
+	if err != nil {
+		return
+	}
+	return
+}
+
+// GetTestConfigByClient getting test config from server
+func (C *ConfigLoader) GetTestConfigByAgent(AgentID string) (testConfig []Test, err error) {
+	testResp := testEndpoint.TestHttpResponse{}
+	resp, err := C.httpclient.Get(C.serverAddress+testConfigPath+"?agent="+AgentID, nil)
+	if err != nil {
+		return
+	}
+	json.NewDecoder(resp.Body).Decode(&testResp)
+	testConfig = testModeltoTestConfig(testResp.TestList)
+	return
+}
+
+// GetTestConfigByClient getting test config from server
+func (C *ConfigLoader) GetAgentConfig(AgentID string) (agentConfig Agent, err error) {
+	agentResponse := agentEndpoint.AgentHttpResponse{}
+	resp, err := C.httpclient.Get(C.serverAddress+agentConfigPath+"?id="+AgentID, nil)
+	if err != nil {
+		return
+	}
+	json.NewDecoder(resp.Body).Decode(&agentResponse)
+	agentConfig = agentModeltoAgentConfig(agentResponse.AgentList)
+	return
+}
+
+func testModeltoTestConfig(testList []testModel.Test) (testConfig []Test) {
+	for idx, testM := range testList {
+		testConfig = append(testConfig, Test{
+			Name:               testM.Name,
+			Desc:               testM.Desc,
+			Domain:             testM.Domain,
+			Endpoint:           testM.Endpoint,
+			Method:             testM.Method,
+			Protocol:           testM.Protocol,
+			PeriodInCron:       testM.PeriodInCron,
+			Body:               testM.Body,
+			ExpectedStatusCode: testM.ExpectedStatusCode,
+		})
+		json.Unmarshal([]byte(testM.Header), testConfig[idx].Header)
+	}
+	return
+}
+
+func agentModeltoAgentConfig(agentList []agentModel.Agent) (agentConfig Agent) {
+	if len(agentList) == 0 {
+		return
+	}
+	agentConfig.Location = agentList[0].Location
+	agentConfig.GeoHash = agentList[0].GeoHash
+	agentConfig.ISP = agentList[0].ISP
 
 	return
 }

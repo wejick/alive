@@ -28,3 +28,6 @@ INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,h
 INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status)
     VALUES("DESC","NAME","DOMAIN","ENDPOINT","METHOD","PROTOCOL","PERIOD_IN_CRON","BODY","HEADER",
     "AGENT00",200,1);
+INSERT INTO test(desc,name,domain,endpoint,method,protocol,period_in_cron,body,header,agent,expected_status_code,status)
+    VALUES("DESC","NAME","DOMAIN","ENDPOINT","METHOD","PROTOCOL","PERIOD_IN_CRON","BODY","HEADER",
+    "1",200,1);
