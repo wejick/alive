@@ -23,18 +23,22 @@ func NewSqlite(sqliteDB *sql.DB) (test *TestSqlite) {
 
 // GetTest get test configuration by id or by pagination.
 // if IDs are provided, rows and offset will be ignored
-func (T *TestSqlite) GetTest(IDs []string, rows, offset int) (testlist []modelTest.Test, err error) {
+func (T *TestSqlite) GetTest(IDs []string, agent string, rows, offset int) (testlist []modelTest.Test, err error) {
 	query := ""
 	paging := ""
+	agentQ := ""
 
 	if rows != 0 {
 		paging = fmt.Sprintf(" LIMIT %d OFFSET %d", rows, offset)
+	}
+	if agent != "" {
+		agentQ = fmt.Sprintf(" WHERE Agent = '%s'", agent)
 	}
 	if len(IDs) > 0 && IDs[0] != "" {
 		ids := strings.Join(IDs[:], ",")
 		query = fmt.Sprintf("SELECT * FROM test WHERE id IN (%s)", ids)
 	} else {
-		query = fmt.Sprintf("SELECT * FROM test%s", paging)
+		query = fmt.Sprintf("SELECT * FROM test %s %s", agentQ, paging)
 	}
 
 	dbRows, err := T.db.Query(query)

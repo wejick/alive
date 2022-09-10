@@ -32,13 +32,14 @@ func (T *Test) GetTestHandler(w http.ResponseWriter, r *http.Request, ps httprou
 
 	rowsStr := r.URL.Query().Get("rows")
 	pageStr := r.URL.Query().Get("page")
+	agentStr := r.URL.Query().Get("agent")
 
 	rows, _ := strconv.Atoi(rowsStr)
 	page, _ := strconv.Atoi(pageStr)
 
 	resp := TestHttpResponse{}
 	var err error
-	resp.TestList, err = T.testService.GetTest(ids, int64(rows), int64(page))
+	resp.TestList, err = T.testService.GetTest(ids, agentStr, int64(rows), int64(page))
 	if err != nil {
 		httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
 		return

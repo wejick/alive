@@ -26,6 +26,7 @@ func TestTestSqlite_GetTest(t *testing.T) {
 	type args struct {
 		IDs    []string
 		rows   int
+		agent  string
 		offset int
 	}
 	tests := []struct {
@@ -95,13 +96,42 @@ func TestTestSqlite_GetTest(t *testing.T) {
 					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
 			},
 		},
+		{
+			name: "select agent00 rows = 1",
+			fields: fields{
+				db: sqldb,
+			},
+			args: args{
+				rows:  1,
+				agent: "AGENT00",
+			},
+			wantTestlist: []modelTest.Test{
+				{ID: 5, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
+					Body: "BODY", Header: "HEADER", Agent: "AGENT00", ExpectedStatusCode: 200, Status: 1},
+			},
+		},
+		{
+			name: "select agent00 rows = 1 offset=1",
+			fields: fields{
+				db: sqldb,
+			},
+			args: args{
+				rows:   1,
+				agent:  "AGENT00",
+				offset: 1,
+			},
+			wantTestlist: []modelTest.Test{
+				{ID: 6, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
+					Body: "BODY", Header: "HEADER", Agent: "AGENT00", ExpectedStatusCode: 200, Status: 1},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			T := &TestSqlite{
 				db: tt.fields.db,
 			}
-			gotTestlist, err := T.GetTest(tt.args.IDs, tt.args.rows, tt.args.offset)
+			gotTestlist, err := T.GetTest(tt.args.IDs, tt.args.agent, tt.args.rows, tt.args.offset)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TestSqlite.GetTest() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -194,7 +224,7 @@ func TestTestSqlite_AddTest(t *testing.T) {
 
 			lastID, _ := T.GetTotalTest()
 			ID := strconv.Itoa(int(lastID))
-			result, _ := T.GetTest([]string{ID}, 0, 0)
+			result, _ := T.GetTest([]string{ID}, "", 0, 0)
 			tt.wantResult[0].ID = lastID
 			if !reflect.DeepEqual(result, tt.wantResult) {
 				t.Errorf("TestSqlite.GetTest() = %v, want %v", result, tt.wantResult)

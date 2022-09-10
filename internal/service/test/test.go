@@ -16,11 +16,11 @@ func New(testRepo repoTest.Itest) *Test {
 }
 
 //GetTest get test data by id or by pagination.
-// if IDs are provided, rows and page will be ignored
+// if IDs are provided, agent, rows and page will be ignored
 // page started from 1
-func (T *Test) GetTest(IDs []string, rows, page int64) (testlist []modelTest.Test, err error) {
+func (T *Test) GetTest(IDs []string, agent string, rows, page int64) (testlist []modelTest.Test, err error) {
 	offset := rows * page
-	testlist, err = T.testRepo.GetTest(IDs, int(rows), int(offset))
+	testlist, err = T.testRepo.GetTest(IDs, agent, int(rows), int(offset))
 
 	return
 }
