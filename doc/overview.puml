@@ -1,0 +1,30 @@
+@startuml
+!include <logos/sqlite>
+!include <logos/go>
+!include <logos/prometheus>
+
+rectangle "<$prometheus>\nprometheus" as prometheus
+rectangle "fluentbit" as fluentbit
+
+rectangle "<$go>\nalive-agent 1" as agent1
+rectangle "<$go>\nalive-agent 2" as agent2
+rectangle "<$go>\nalive-agent ..." as agent3
+rectangle "<$go>\nalive-agent N" as agentn
+
+rectangle "<$go>\nalive-server" as server
+database "<$sqlite>\nmain-db" as sqlite
+
+agent1 <--> server
+agent2 <--> server
+agent3 <--> server
+agentn <--> server
+
+server --> sqlite
+
+prometheus <-- fluentbit  : push data prometheus_remote_write
+fluentbit --> agent1 : scrape /metrics
+fluentbit --> agent2 : scrape /metrics
+fluentbit --> agent3 : scrape /metrics
+fluentbit --> agentn : scrape /metrics
+
+@enduml
