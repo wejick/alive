@@ -162,7 +162,7 @@ func TestTestSqlite_GetTotalTest(t *testing.T) {
 		{
 			name:      "get total",
 			fields:    fields{db: sqldb},
-			wantTotal: 7,
+			wantTotal: 8,
 		},
 	}
 	for _, tt := range tests {

@@ -20,7 +20,7 @@ func TestResponseJSON(t *testing.T) {
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	assert.Equal(t, body, []byte("null"))
+	assert.Equal(t, body, []byte("{\"data\":null}"))
 	assert.Equal(t, w.Header(), http.Header(http.Header{"Content-Type": []string{"application/json"}}))
 	assert.Equal(t, w.Code, 200)
 
@@ -33,7 +33,7 @@ func TestResponseJSON(t *testing.T) {
 	resp = w.Result()
 	body, _ = ioutil.ReadAll(resp.Body)
 
-	assert.Equal(t, body, []byte(`{"message":"Not OK"}`))
+	assert.Equal(t, body, []byte(`{"data":{"header":{"status":"Not OK"}}}`))
 	assert.Equal(t, w.Header(), http.Header(http.Header{"Content-Type": []string{"application/json"}}))
 	assert.Equal(t, w.Code, 500)
 }
