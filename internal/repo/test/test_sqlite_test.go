@@ -2,23 +2,28 @@ package test
 
 import (
 	"database/sql"
+	"fmt"
 	"reflect"
-	"strconv"
 	"testing"
 
 	model "github.com/wejick/alive/internal/model"
 	_ "modernc.org/sqlite"
 )
 
-const dbpath = "../../../alive.db"
+const dbpath = "../../../alive.db?_pragma=foreign_keys(1)&_pragma=busy_timeout(1000)"
 
-func TestTestSqlite_GetTest(t *testing.T) {
+var sqldb *sql.DB
 
-	sqldb, err := sql.Open("sqlite", dbpath)
+func init() {
+	localSqldb, err := sql.Open("sqlite", dbpath)
 	if err != nil {
+		fmt.Print(err)
 		return
 	}
-	defer sqldb.Close()
+	sqldb = localSqldb
+}
+
+func TestTestSqlite_GetTest(t *testing.T) {
 
 	type fields struct {
 		db *sql.DB
@@ -45,8 +50,8 @@ func TestTestSqlite_GetTest(t *testing.T) {
 				IDs: []string{"1"},
 			},
 			wantTestlist: []model.Test{
-				{ID: 1, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
+				{ID: 1, Desc: "Testing google", Name: "Get Google.com", Domain: "google.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "1", ExpectedStatusCode: 200, Status: 1},
 			},
 		},
 		{
@@ -58,10 +63,10 @@ func TestTestSqlite_GetTest(t *testing.T) {
 				IDs: []string{"1", "2"},
 			},
 			wantTestlist: []model.Test{
-				{ID: 1, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
-				{ID: 2, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
+				{ID: 1, Desc: "Testing google", Name: "Get Google.com", Domain: "google.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "1", ExpectedStatusCode: 200, Status: 1},
+				{ID: 2, Desc: "Testing yahoo", Name: "Get yahoo.com", Domain: "yahoo.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "1", ExpectedStatusCode: 200, Status: 1},
 			},
 		},
 		{
@@ -74,55 +79,53 @@ func TestTestSqlite_GetTest(t *testing.T) {
 				offset: 0,
 			},
 			wantTestlist: []model.Test{
-				{ID: 1, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
-				{ID: 2, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
+				{ID: 1, Desc: "Testing google", Name: "Get Google.com", Domain: "google.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "1", ExpectedStatusCode: 200, Status: 1},
+				{ID: 2, Desc: "Testing yahoo", Name: "Get yahoo.com", Domain: "yahoo.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "1", ExpectedStatusCode: 200, Status: 1},
 			},
 		},
 		{
-			name: "select rows = 2, offset 2",
-			fields: fields{
-				db: sqldb,
-			},
-			args: args{
-				rows:   2,
-				offset: 2,
-			},
-			wantTestlist: []model.Test{
-				{ID: 3, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
-				{ID: 4, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
-			},
-		},
-		{
-			name: "select agent00 rows = 1",
-			fields: fields{
-				db: sqldb,
-			},
-			args: args{
-				rows:  1,
-				agent: "AGENT00",
-			},
-			wantTestlist: []model.Test{
-				{ID: 5, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT00", ExpectedStatusCode: 200, Status: 1},
-			},
-		},
-		{
-			name: "select agent00 rows = 1 offset=1",
+			name: "select rows = 1, offset 1",
 			fields: fields{
 				db: sqldb,
 			},
 			args: args{
 				rows:   1,
-				agent:  "AGENT00",
 				offset: 1,
 			},
 			wantTestlist: []model.Test{
-				{ID: 6, Name: "NAME", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT00", ExpectedStatusCode: 200, Status: 1},
+				{ID: 2, Desc: "Testing yahoo", Name: "Get yahoo.com", Domain: "yahoo.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "1", ExpectedStatusCode: 200, Status: 1},
+			},
+		},
+		{
+			name: "select agent 2 rows = 1",
+			fields: fields{
+				db: sqldb,
+			},
+			args: args{
+				rows:  1,
+				agent: "2",
+			},
+			wantTestlist: []model.Test{
+				{ID: 3, Desc: "Testing google", Name: "Get Google.com", Domain: "google.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "2", ExpectedStatusCode: 200, Status: 1},
+			},
+		},
+		{
+			name: "select agent 2 rows = 1 offset=1",
+			fields: fields{
+				db: sqldb,
+			},
+			args: args{
+				rows:   1,
+				agent:  "2",
+				offset: 1,
+			},
+			wantTestlist: []model.Test{
+				{ID: 4, Desc: "Testing yahoo", Name: "Get yahoo.com", Domain: "yahoo.com", Endpoint: "/", Method: "GET", Protocol: "https", PeriodInCron: "@every 10s",
+					Body: "", Header: "", Agent: "2", ExpectedStatusCode: 200, Status: 1},
 			},
 		},
 	}
@@ -144,11 +147,6 @@ func TestTestSqlite_GetTest(t *testing.T) {
 }
 
 func TestTestSqlite_GetTotalTest(t *testing.T) {
-	sqldb, err := sql.Open("sqlite", dbpath)
-	if err != nil {
-		return
-	}
-	defer sqldb.Close()
 
 	type fields struct {
 		db *sql.DB
@@ -162,7 +160,7 @@ func TestTestSqlite_GetTotalTest(t *testing.T) {
 		{
 			name:      "get total",
 			fields:    fields{db: sqldb},
-			wantTotal: 8,
+			wantTotal: 4,
 		},
 	}
 	for _, tt := range tests {
@@ -182,53 +180,48 @@ func TestTestSqlite_GetTotalTest(t *testing.T) {
 	}
 }
 
-func TestTestSqlite_AddTest(t *testing.T) {
-	sqldb, err := sql.Open("sqlite", dbpath)
-	if err != nil {
-		return
-	}
-	defer sqldb.Close()
+// func TestTestSqlite_AddTest(t *testing.T) {
 
-	type fields struct {
-		db *sql.DB
-	}
-	type args struct {
-		test model.Test
-	}
-	tests := []struct {
-		name       string
-		fields     fields
-		args       args
-		wantResult []model.Test
-		wantErr    bool
-	}{
-		{
-			name:   "add simple",
-			fields: fields{db: sqldb},
-			args: args{
-				test: model.Test{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
-			},
-			wantResult: []model.Test{{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
-				Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1}},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			T := &TestSqlite{
-				db: tt.fields.db,
-			}
-			if err := T.AddTest(tt.args.test); (err != nil) != tt.wantErr {
-				t.Errorf("TestSqlite.AddTest() error = %v, wantErr %v", err, tt.wantErr)
-			}
+// 	type fields struct {
+// 		db *sql.DB
+// 	}
+// 	type args struct {
+// 		test model.Test
+// 	}
+// 	tests := []struct {
+// 		name       string
+// 		fields     fields
+// 		args       args
+// 		wantResult []model.Test
+// 		wantErr    bool
+// 	}{
+// 		{
+// 			name:   "add simple",
+// 			fields: fields{db: sqldb},
+// 			args: args{
+// 				test: model.Test{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
+// 					Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1},
+// 			},
+// 			wantResult: []model.Test{{Name: "Simple test", Desc: "DESC", Domain: "DOMAIN", Endpoint: "ENDPOINT", Method: "METHOD", Protocol: "PROTOCOL", PeriodInCron: "PERIOD_IN_CRON",
+// 				Body: "BODY", Header: "HEADER", Agent: "AGENT", ExpectedStatusCode: 200, Status: 1}},
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			T := &TestSqlite{
+// 				db: tt.fields.db,
+// 			}
+// 			if err := T.AddTest(tt.args.test); (err != nil) != tt.wantErr {
+// 				t.Errorf("TestSqlite.AddTest() error = %v, wantErr %v", err, tt.wantErr)
+// 			}
 
-			lastID, _ := T.GetTotalTest()
-			ID := strconv.Itoa(int(lastID))
-			result, _ := T.GetTest([]string{ID}, "", 0, 0)
-			tt.wantResult[0].ID = lastID
-			if !reflect.DeepEqual(result, tt.wantResult) {
-				t.Errorf("TestSqlite.GetTest() = %v, want %v", result, tt.wantResult)
-			}
-		})
-	}
-}
+// 			lastID, _ := T.GetTotalTest()
+// 			ID := strconv.Itoa(int(lastID))
+// 			result, _ := T.GetTest([]string{ID}, "", 0, 0)
+// 			tt.wantResult[0].ID = lastID
+// 			if !reflect.DeepEqual(result, tt.wantResult) {
+// 				t.Errorf("TestSqlite.GetTest() = %v, want %v", result, tt.wantResult)
+// 			}
+// 		})
+// 	}
+// }

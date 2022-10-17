@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS agent (
     id INTEGER PRIMARY KEY,
     location TEXT NOT NULL,
     geohash TEXT NOT NULL,
-    ISP TEXT NOT NULL
+    ISP TEXT NOT NULL,
+    status INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS test (
@@ -20,4 +21,11 @@ CREATE TABLE IF NOT EXISTS test (
     agent TEXT NOT NULL,
     expected_status_code INTEGER NOT NULL,
     status INTEGER NOT NULL
-)
+);
+
+CREATE TABLE IF NOT EXISTS agent_ping (
+    id INTEGER PRIMARY KEY,
+    agent_id INTEGER UNIQUE,
+    last_ping_time INTEGER,
+    FOREIGN KEY (agent_id) REFERENCES agent(id)
+);

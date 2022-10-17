@@ -2,6 +2,9 @@ package agent
 
 import (
 	"database/sql"
+	"flag"
+	"fmt"
+	"os"
 	"reflect"
 	"testing"
 
@@ -9,15 +12,28 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-const dbpath = "../../../alive.db"
+const dbpath = "../../../alive.db?_pragma=foreign_keys(1)&_pragma=busy_timeout(1000)"
 
-func TestAgentSqlite_GetAgents(t *testing.T) {
-	sqldb, err := sql.Open("sqlite", dbpath)
+var sqldb *sql.DB
+
+func init() {
+	localSqldb, err := sql.Open("sqlite", dbpath)
 	if err != nil {
+		fmt.Print(err)
 		return
 	}
+	sqldb = localSqldb
+}
+
+func TestMain(m *testing.M) {
 	defer sqldb.Close()
 
+	flag.Parse()
+
+	os.Exit(m.Run())
+}
+
+func TestAgentSqlite_GetAgents(t *testing.T) {
 	type fields struct {
 		db *sql.DB
 	}
@@ -35,7 +51,7 @@ func TestAgentSqlite_GetAgents(t *testing.T) {
 			fields: fields{db: sqldb},
 			args:   args{agentIDs: []string{"1"}},
 			wantAgentList: []model.Agent{
-				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome"},
+				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome", StatusText: "ACTIVE", Status: 1},
 			},
 		},
 		{
@@ -43,22 +59,22 @@ func TestAgentSqlite_GetAgents(t *testing.T) {
 			fields: fields{db: sqldb},
 			args:   args{agentIDs: []string{"1", "2"}},
 			wantAgentList: []model.Agent{
-				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome"},
-				{ID: 2, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indosat"},
+				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome", StatusText: "ACTIVE", Status: 1},
+				{ID: 2, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indosat", StatusText: "ACTIVE", Status: 1},
 			},
 		},
 		{
 			name:   "select",
 			fields: fields{db: sqldb},
 			wantAgentList: []model.Agent{
-				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome"},
-				{ID: 2, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indosat"},
-				{ID: 3, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Telkomsel"},
-				{ID: 4, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "XL"},
-				{ID: 5, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "Indiehome"},
-				{ID: 6, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "Indosat"},
-				{ID: 7, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "Telkomsel"},
-				{ID: 8, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "XL"},
+				{ID: 1, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indiehome", StatusText: "ACTIVE", Status: 1},
+				{ID: 2, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Indosat", StatusText: "ACTIVE", Status: 1},
+				{ID: 3, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "Telkomsel", StatusText: "ACTIVE", Status: 1},
+				{ID: 4, Location: "Jakarta", GeoHash: "qqguzgberuhd1", ISP: "XL", StatusText: "ACTIVE", Status: 1},
+				{ID: 5, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "Indiehome", StatusText: "ACTIVE", Status: 1},
+				{ID: 6, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "Indosat", StatusText: "ACTIVE", Status: 1},
+				{ID: 7, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "Telkomsel", StatusText: "ACTIVE", Status: 1},
+				{ID: 8, Location: "Surabaya", GeoHash: "qw8ntwzd4j4mj", ISP: "XL", StatusText: "ACTIVE", Status: 1},
 			},
 		},
 	}
@@ -75,12 +91,6 @@ func TestAgentSqlite_GetAgents(t *testing.T) {
 }
 
 func TestAgentSqlite_AddAgent(t *testing.T) {
-	sqldb, err := sql.Open("sqlite", dbpath)
-	if err != nil {
-		return
-	}
-	defer sqldb.Close()
-
 	type fields struct {
 		db *sql.DB
 	}

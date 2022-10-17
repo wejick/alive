@@ -52,3 +52,14 @@ func (A *Agent) AddAgentHandler(w http.ResponseWriter, r *http.Request, ps httpr
 		httputil.ResponseError("", http.StatusAccepted, w)
 	}
 }
+
+// PingAgentHandler http handler for agent to ping
+func (A *Agent) PingAgentHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id := r.URL.Query().Get("id")
+	err := A.AgentService.Ping(id)
+	if err != nil {
+		httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
+	} else {
+		httputil.ResponseError("", http.StatusAccepted, w)
+	}
+}

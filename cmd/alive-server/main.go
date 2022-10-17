@@ -7,8 +7,9 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/robfig/cron/v3"
 
-	httpAgent "github.com/wejick/alive/internal/endpoint/agent"
+	endpointAgent "github.com/wejick/alive/internal/endpoint/agent"
 	repoAgent "github.com/wejick/alive/internal/repo/agent"
 	serviceAgent "github.com/wejick/alive/internal/service/agent"
 
@@ -23,7 +24,7 @@ import (
 
 func main() {
 	// open sqlitedb
-	sqldb, err := sql.Open("sqlite", "./alive.db")
+	sqldb, err := sql.Open("sqlite", "./alive.db?_pragma=foreign_keys(1)&_pragma=busy_timeout(1000)")
 	if err != nil {
 		return
 	}
@@ -31,7 +32,8 @@ func main() {
 
 	agentRepo := repoAgent.NewSqlite(sqldb)
 	agentService := serviceAgent.New(agentRepo)
-	agentHttpHandler := httpAgent.New(agentService)
+	agentHttpHandler := endpointAgent.New(agentService)
+	healthcheckHandler := endpointAgent.NewHealthcheckWorker(agentService)
 
 	testRepo := repoTest.NewSqlite(sqldb)
 	testService := serviceTest.New(testRepo)
@@ -40,13 +42,20 @@ func main() {
 	metricRuntime := metric.New()
 	metricRuntime.Init()
 
+	c := cron.New()
+	c.AddFunc("@every 20m", func() {
+		//TODO log the error
+		healthcheckHandler.UpdateHealthStatus()
+	})
+	c.Start()
+
 	router := httprouter.New()
 	router.GET("/config/agent", agentHttpHandler.GetAgentHandler)
 	router.PUT("/config/agent", agentHttpHandler.AddAgentHandler)
 	router.GET("/config/test", testHttpHandler.GetTestHandler)
 	router.PUT("/config/test", testHttpHandler.AddTestHandler)
 
-	router.POST("/agentping", nil)
+	router.POST("/agent/ping", agentHttpHandler.PingAgentHandler)
 
 	fmt.Println("Alive serving 8081")
 	log.Fatal(http.ListenAndServe(":8081", router))

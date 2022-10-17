@@ -22,3 +22,7 @@ func (A *Agent) GetAgents(agentIDs []string) (agentList []model.Agent) {
 func (A *Agent) AddAgent(agent model.Agent) (err error) {
 	return A.agentRepo.AddAgent(agent)
 }
+
+func (A *Agent) Ping(agentID string) (err error) {
+	return A.agentRepo.Ping(agentID)
+}
