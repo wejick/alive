@@ -55,7 +55,7 @@ func main() {
 	router.GET("/config/test", testHttpHandler.GetTestHandler)
 	router.PUT("/config/test", testHttpHandler.AddTestHandler)
 
-	router.POST("/agent/ping", agentHttpHandler.PingAgentHandler)
+	router.GET("/agent/ping", agentHttpHandler.PingAgentHandler)
 
 	fmt.Println("Alive serving 8081")
 	log.Fatal(http.ListenAndServe(":8081", router))

@@ -1,4 +1,4 @@
 {
     "server-address" : "http://localhost:8081",
-    "agent-id" : "1"
+    "agent-id" : 1
 }

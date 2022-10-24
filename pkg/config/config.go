@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"time"
 
@@ -15,19 +16,23 @@ import (
 type ConfigLoader struct {
 	httpclient    *httpclient.Client
 	serverAddress string
-	agentName     string
+	agentID       int64
 }
 
 type Config struct {
+	BaseID        int64  `json:"agent-id"`
 	ServerAddress string `json:"server-address"`
 	Agent         Agent  `json:"agent"`
 	Tests         []Test `json:"tests"`
 }
 
 type Agent struct {
-	Location string `json:"location"`
-	GeoHash  string `json:"geohash"`
-	ISP      string `json:"ISP"`
+	ID         int64  `json:"id"`
+	Location   string `json:"location"`
+	GeoHash    string `json:"geohash"`
+	ISP        string `json:"ISP"`
+	StatusText string `json:"status_text"`
+	Status     int    `json:"status"`
 }
 
 type Test struct {
@@ -45,8 +50,9 @@ type Test struct {
 
 const agentConfigPath = "/config/agent"
 const testConfigPath = "/config/test"
+const pingPath = "/agent/ping"
 
-func NewHTTPConfigLoader(serverAddress string, agentName string) (loader *ConfigLoader) {
+func NewHTTPConfigLoader(serverAddress string, agentID int64) (loader *ConfigLoader) {
 	// Create a new HTTP client with a default timeout
 	timeout := 15000 * time.Millisecond
 	httpclt := httpclient.NewClient(httpclient.WithHTTPTimeout(timeout))
@@ -54,7 +60,7 @@ func NewHTTPConfigLoader(serverAddress string, agentName string) (loader *Config
 	loader = &ConfigLoader{
 		httpclient:    httpclt,
 		serverAddress: serverAddress,
-		agentName:     agentName,
+		agentID:       agentID,
 	}
 
 	return
@@ -76,11 +82,11 @@ func LoadConfig(path string) (config Config, err error) {
 
 // GetConfigFromServer getting whole config from server
 func (C *ConfigLoader) GetConfigFromServer() (config Config, err error) {
-	config.Agent, err = C.GetAgentConfig(C.agentName)
+	config.Agent, err = C.GetAgentConfig(C.agentID)
 	if err != nil {
 		return
 	}
-	config.Tests, err = C.GetTestConfigByAgent(C.agentName)
+	config.Tests, err = C.GetTestConfigByAgent(C.agentID)
 	if err != nil {
 		return
 	}
@@ -88,26 +94,49 @@ func (C *ConfigLoader) GetConfigFromServer() (config Config, err error) {
 }
 
 // GetTestConfigByClient getting test config from server
-func (C *ConfigLoader) GetTestConfigByAgent(AgentID string) (testConfig []Test, err error) {
-	testResp := testEndpoint.TestHttpResponse{}
-	resp, err := C.httpclient.Get(C.serverAddress+testConfigPath+"?agentid="+AgentID, nil)
+func (C *ConfigLoader) GetTestConfigByAgent(AgentID int64) (testConfig []Test, err error) {
+	path := fmt.Sprintf("%s?id=%d", C.serverAddress+testConfigPath, C.agentID)
+
+	testResp := struct {
+		Data testEndpoint.TestHttpResponse `json:"data"`
+	}{}
+	resp, err := C.httpclient.Get(path, nil)
 	if err != nil {
 		return
 	}
-	json.NewDecoder(resp.Body).Decode(&testResp)
-	testConfig = modeltoTestConfig(testResp.TestList)
+	err = json.NewDecoder(resp.Body).Decode(&testResp)
+	if err != nil {
+		return
+	}
+	testConfig = modeltoTestConfig(testResp.Data.TestList)
 	return
 }
 
 // GetTestConfigByClient getting test config from server
-func (C *ConfigLoader) GetAgentConfig(AgentID string) (agentConfig Agent, err error) {
-	agentResponse := agentEndpoint.AgentHttpResponse{}
-	resp, err := C.httpclient.Get(C.serverAddress+agentConfigPath+"?id="+AgentID, nil)
+func (C *ConfigLoader) GetAgentConfig(AgentID int64) (agentConfig Agent, err error) {
+	path := fmt.Sprintf("%s?id=%d", C.serverAddress+agentConfigPath, C.agentID)
+
+	agentResponse := struct {
+		Data agentEndpoint.AgentHttpResponse `json:"data"`
+	}{}
+	resp, err := C.httpclient.Get(path, nil)
 	if err != nil {
 		return
 	}
-	json.NewDecoder(resp.Body).Decode(&agentResponse)
-	agentConfig = modeltoAgentConfig(agentResponse.AgentList)
+	defer resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(&agentResponse)
+	if err != nil {
+		return
+	}
+
+	agentConfig = modeltoAgentConfig(agentResponse.Data.AgentList)
+
+	return
+}
+
+func (C *ConfigLoader) Ping() (err error) {
+	path := fmt.Sprintf("%s?id=%d", C.serverAddress+pingPath, C.agentID)
+	_, err = C.httpclient.Get(path, nil)
 	return
 }
 
@@ -133,9 +162,12 @@ func modeltoAgentConfig(agentList []model.Agent) (agentConfig Agent) {
 	if len(agentList) == 0 {
 		return
 	}
+	agentConfig.ID = agentList[0].ID
 	agentConfig.Location = agentList[0].Location
 	agentConfig.GeoHash = agentList[0].GeoHash
 	agentConfig.ISP = agentList[0].ISP
+	agentConfig.StatusText = agentList[0].StatusText
+	agentConfig.Status = agentList[0].Status
 
 	return
 }

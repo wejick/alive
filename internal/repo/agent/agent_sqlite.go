@@ -80,7 +80,7 @@ func (A *AgentSqlite) SetAgentStatus(agentIDs []string, status model.AgentStatus
 }
 
 func (A *AgentSqlite) Ping(agentID string) (err error) {
-	query := "INSERT INTO agent_ping(agent_id,last_ping_time) VALUES(?, strftime('%s','now'))"
+	query := "INSERT INTO agent_ping(agent_id,last_ping_time) VALUES(?, strftime('%s','now')) ON CONFLICT(agent_id) DO UPDATE SET last_ping_time=strftime('%s','now')"
 	tx, err := A.db.BeginTx(context.Background(), nil)
 	if err != nil {
 		return
