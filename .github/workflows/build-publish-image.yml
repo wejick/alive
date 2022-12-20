@@ -1,0 +1,32 @@
+name: build-publish-image
+run-name: ${{github.actor}} is building and publishin image
+on: [tag]
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set variables
+        run: |
+          VER-SERVER=$(cat ./cmd/alive-server/version.txt)
+          echo "VERSION-SERVER=$VER-SERVER" >> $GITHUB_ENV
+          VER-AGENT=$(cat ./cmd/alive-agent/version.txt)
+          echo "VERSION-AGENT=$VER-AGENT" >> $GITHUB_ENV
+
+      - name: build-image-server
+        id: build-image-server
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: alive-server
+          tags: latest ${{ env.VERSION-SERVER }}
+          containerfiles: |
+            ./dockerfile.server
+
+      - name: build-image-agent
+        id: build-image-agent
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: alive-agent
+          tags: latest ${{ env.VERSION-AGENT }}
+          containerfiles: |
+            ./dockerfile.agent
