@@ -20,5 +20,22 @@ jobs:
         with:
           image: alive-server
           tags: latest ${{ env.VERSION-SERVER }}
+          layers: true
           containerfiles: |
             ./dockerfile.server
+      
+      - name: push-server-to-ghrc
+        id: push-server-to-ghrc
+        uses: redhat-action/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image-server.outputs.image }}
+          tags: ${{ steps.build-image-server.outputs.tags }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          extra-args: |
+            --disable-content-trust
+
+      - name: Echo outputs
+        run: |
+          echo "${{ toJSON(steps.push.outputs) }}"
