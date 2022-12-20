@@ -26,7 +26,7 @@ jobs:
       
       - name: push-server-to-ghrc
         id: push-server-to-ghrc
-        uses: redhat-action/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@v2.6
         with:
           image: ${{ steps.build-image-server.outputs.image }}
           tags: ${{ steps.build-image-server.outputs.tags }}
