@@ -1,6 +1,9 @@
 name: build-publish-image
 run-name: ${{github.actor}} is building and publishin image
-on: [tag]
+on:
+  release:
+      types:
+        - created
 jobs:
   build-push:
     runs-on: ubuntu-latest
