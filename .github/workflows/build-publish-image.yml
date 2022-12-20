@@ -30,7 +30,7 @@ jobs:
         with:
           image: ${{ steps.build-image-server.outputs.image }}
           tags: ${{ steps.build-image-server.outputs.tags }}
-          registry: ghcr.io
+          registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           extra-args: |
