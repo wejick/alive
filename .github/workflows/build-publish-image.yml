@@ -14,8 +14,6 @@ jobs:
         run: |
           VER-SERVER=$(cat ./cmd/alive-server/version.txt)
           echo "VERSION-SERVER=$VER-SERVER" >> $GITHUB_ENV
-          VER-AGENT=$(cat ./cmd/alive-agent/version.txt)
-          echo "VERSION-AGENT=$VER-AGENT" >> $GITHUB_ENV
 
       - name: build-image-server
         id: build-image-server
@@ -25,12 +23,3 @@ jobs:
           tags: latest ${{ env.VERSION-SERVER }}
           containerfiles: |
             ./dockerfile.server
-
-      - name: build-image-agent
-        id: build-image-agent
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: alive-agent
-          tags: latest ${{ env.VERSION-AGENT }}
-          containerfiles: |
-            ./dockerfile.agent
