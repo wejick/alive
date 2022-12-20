@@ -1,4 +1,5 @@
 server-version:=`cat ./cmd/alive-server/version.txt`
+agent-version:=`cat ./cmd/alive-agent/version.txt`
 
 reset-dummy-data:
 	rm alive.db && sqlite3 < migration.sql && sqlite3 < ./example/dummy_data.sql
@@ -16,3 +17,6 @@ run-agent:
 
 build-container-server:
 	podman build -t wejick/alive-server:$(server-version) -f dockerfile.server .
+
+build-container-agent:
+	podman build -t wejick/alive-agent:$(agent-version) -f dockerfile.agent .
