@@ -1,0 +1,13 @@
+name: alive-linting
+run-name: ${{github.actor}} is linting alive
+on: [push]
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19.4
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
