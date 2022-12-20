@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,13 +15,18 @@ import (
 	"github.com/wejick/alive/pkg/task/httptask"
 )
 
+var flagConfigPath = flag.String("configpath", "./config.json", "path to config file")
+
 func main() {
-	globalConfig, err := config.LoadConfig("./config.json")
+
+	flag.Parse()
+
+	globalConfig, err := config.LoadConfig(*flagConfigPath)
 	if err != nil {
 		fmt.Println("couldn't open config", err)
 		os.Exit(-1)
 	}
-	fmt.Println("Local config loaded")
+	fmt.Println("Local config loaded", *flagConfigPath)
 
 	cfgLoader := config.NewHTTPConfigLoader(globalConfig.ServerAddress, globalConfig.BaseID)
 

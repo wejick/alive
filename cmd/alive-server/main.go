@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,10 +23,21 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+var flagSqliteDBPath = flag.String("dbpath", "./alive.db", "path to sqlite db")
+
 func main() {
+	flag.Parse()
+
 	// open sqlitedb
-	sqldb, err := sql.Open("sqlite", "./alive.db?_pragma=foreign_keys(1)&_pragma=busy_timeout(1000)")
+	fmt.Println("Opening config file", *flagSqliteDBPath)
+	sqldb, err := sql.Open("sqlite", *flagSqliteDBPath+"?_pragma=foreign_keys(1)&_pragma=busy_timeout(1000)")
 	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	err = sqldb.Ping()
+	if err != nil {
+		fmt.Print(err)
 		return
 	}
 	defer sqldb.Close()
