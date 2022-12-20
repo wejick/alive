@@ -13,6 +13,7 @@ jobs:
       - name: Set variables
         run: |
           echo "VERSION-SERVER=$(cat ./cmd/alive-server/version.txt)" >> $GITHUB_ENV
+          echo "VERSION-AGENT=$(cat ./cmd/alive-agent/version.txt)" >> $GITHUB_ENV
 
       - name: build-image-server
         id: build-image-server
@@ -35,7 +36,25 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           extra-args: |
             --disable-content-trust
+      
+      - name: build-image-agent
+        id: build-image-agent
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: alive-agent
+          tags: latest ${{ env.VERSION-AGENT }}
+          layers: true
+          containerfiles: |
+            ./dockerfile.agent
 
-      - name: Echo outputs
-        run: |
-          echo "${{ toJSON(steps.push.outputs) }}"
+      - name: push-agent-to-ghrc
+        id: push-agent-to-ghrc
+        uses: redhat-actions/push-to-registry@v2.6
+        with:
+          image: ${{ steps.build-image-agent.outputs.image }}
+          tags: ${{ steps.build-image-agent.outputs.tags }}
+          registry: ghcr.io/${{ github.repository_owner }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          extra-args: |
+            --disable-content-trust
