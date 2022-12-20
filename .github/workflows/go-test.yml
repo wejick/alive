@@ -1,7 +1,7 @@
 name: go-test
+run-name: ${{github.actor}} is testing alive
 on: [push]
-
-job:
+jobs:
   test:
     runs-on: ubuntu-latest
     - uses: actions/setup-go@v3
