@@ -20,5 +20,9 @@ RUN apk add ca-certificates
 
 COPY --from=build_base /tmp/go-output/alive-server /app/alive-server
 
+# To be mounted with the volume later
+COPY --from=build_base /tmp/go-output/alive.db /app/db/alive.db
+
 EXPOSE 8081
 ENTRYPOINT ["app/alive-server"]
+CMD ["-dbpath", "/app/db/alive.db"]
