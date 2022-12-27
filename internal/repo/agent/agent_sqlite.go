@@ -60,7 +60,10 @@ func (A *AgentSqlite) AddAgent(agent model.Agent) (err error) {
 		return
 	}
 	_, err = tx.Exec(query, agent.Location, agent.GeoHash, agent.ISP, agent.Status)
-	tx.Commit()
+	if err != nil {
+		return
+	}
+	err = tx.Commit()
 
 	return
 }
@@ -74,7 +77,10 @@ func (A *AgentSqlite) SetAgentStatus(agentIDs []string, status model.AgentStatus
 		return
 	}
 	_, err = tx.Exec(query, status, idcommaseparated)
-	tx.Commit()
+	if err != nil {
+		return
+	}
+	err = tx.Commit()
 
 	return
 }
@@ -86,7 +92,10 @@ func (A *AgentSqlite) Ping(agentID string) (err error) {
 		return
 	}
 	_, err = tx.Exec(query, agentID)
-	tx.Commit()
+	if err != nil {
+		return
+	}
+	err = tx.Commit()
 	return
 }
 
@@ -101,7 +110,10 @@ func (A *AgentSqlite) GetAgentIDToSetUnhealthy(lastPingThreshold int) (ids []int
 	defer rows.Close()
 	for rows.Next() {
 		var agentID int64
-		rows.Scan(&agentID)
+		err = rows.Scan(&agentID)
+		if err != nil {
+			break
+		}
 		ids = append(ids, agentID)
 	}
 
@@ -119,7 +131,10 @@ func (A *AgentSqlite) GetAgentIDToSetActive(lastPingThreshold int) (ids []int64,
 	defer rows.Close()
 	for rows.Next() {
 		var agentID int64
-		rows.Scan(&agentID)
+		err = rows.Scan(&agentID)
+		if err != nil {
+			break
+		}
 		ids = append(ids, agentID)
 	}
 

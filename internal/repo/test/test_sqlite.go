@@ -49,9 +49,11 @@ func (T *TestSqlite) GetTest(IDs []string, agent string, rows, offset int) (test
 
 	for dbRows.Next() {
 		item := model.Test{}
-		dbRows.Scan(&item.ID, &item.Desc, &item.Name, &item.Domain, &item.Endpoint, &item.Method, &item.Protocol, &item.PeriodInCron, &item.Body,
+		err = dbRows.Scan(&item.ID, &item.Desc, &item.Name, &item.Domain, &item.Endpoint, &item.Method, &item.Protocol, &item.PeriodInCron, &item.Body,
 			&item.Header, &item.Agent, &item.ExpectedStatusCode, &item.Status)
-
+		if err != nil {
+			break
+		}
 		testlist = append(testlist, item)
 	}
 
@@ -66,7 +68,10 @@ func (T *TestSqlite) AddTest(test model.Test) (err error) {
 	}
 	_, err = tx.Exec(query, test.Desc, test.Name, test.Domain, test.Endpoint, test.Method, test.Protocol, test.PeriodInCron, test.Body,
 		test.Header, test.Agent, test.ExpectedStatusCode, test.Status)
-	tx.Commit()
+	if err != nil {
+		return
+	}
+	err = tx.Commit()
 
 	return
 }

@@ -18,7 +18,10 @@ func TestResponseJSON(t *testing.T) {
 	w := httptest.NewRecorder()
 	handler(w, req)
 	resp := w.Result()
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		assert.FailNow(t, err.Error())
+	}
 
 	assert.Equal(t, body, []byte("{\"data\":null}"))
 	assert.Equal(t, w.Header(), http.Header(http.Header{"Content-Type": []string{"application/json"}}))
@@ -31,7 +34,10 @@ func TestResponseJSON(t *testing.T) {
 	w = httptest.NewRecorder()
 	handler(w, req)
 	resp = w.Result()
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		assert.FailNow(t, err.Error())
+	}
 
 	assert.Equal(t, body, []byte(`{"data":{"header":{"status":"Not OK"}}}`))
 	assert.Equal(t, w.Header(), http.Header(http.Header{"Content-Type": []string{"application/json"}}))

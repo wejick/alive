@@ -28,7 +28,7 @@ type StandardResponse struct {
 	Data   interface{} `json:"data"`
 }
 
-//ResponseJSON response http request with application/json
+// ResponseJSON response http request with application/json
 func ResponseJSON(data interface{}, status int, writer http.ResponseWriter) (err error) {
 	writer.Header().Set("Content-type", "application/json")
 	writer.WriteHeader(status)
@@ -40,15 +40,18 @@ func ResponseJSON(data interface{}, status int, writer http.ResponseWriter) (err
 	d, err := json.Marshal(response)
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
-		d, _ = json.Marshal(StandardError{Header: &Header{Message: "ResponseJSON: Failed to response " + err.Error()}})
+		d, _ = json.Marshal(StandardError{Header: &Header{Message: "ResponseJSON: Failed to response" + err.Error()}})
 		err = fmt.Errorf("ResponseJSON: Failed to response : %s", err)
 	}
 
-	writer.Write(d)
+	_, errW := writer.Write(d)
+	if errW != nil {
+		fmt.Println("ResponseJSON: Couldn't write http response" + errW.Error())
+	}
 	return
 }
 
-//ResponseJsonPage response http request with application/json with page metadata
+// ResponseJsonPage response http request with application/json with page metadata
 func ResponseJsonPage(data interface{}, message string, status int, page Page, writer http.ResponseWriter) (err error) {
 	writer.Header().Set("Content-type", "application/json")
 	writer.WriteHeader(status)
@@ -64,11 +67,14 @@ func ResponseJsonPage(data interface{}, message string, status int, page Page, w
 	d, err := json.Marshal(response)
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
-		d, _ = json.Marshal(StandardError{Header: &Header{Message: "ResponseJSON: Failed to response " + err.Error()}})
+		d, _ = json.Marshal(StandardError{Header: &Header{Message: "ResponseJSON: Failed to response" + err.Error()}})
 		err = fmt.Errorf("ResponseJSON: Failed to response : %s", err)
 	}
 
-	writer.Write(d)
+	_, errW := writer.Write(d)
+	if errW != nil {
+		fmt.Println("ResponseJSON: Couldn't write http response" + errW.Error())
+	}
 	return
 }
 
