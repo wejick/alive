@@ -16,8 +16,12 @@ run-agent:
 	go build ./cmd/alive-agent
 	./alive-agent --configpath ./config.json
 
+run-linter:
+	podman run --rm -v $(pwd):/app -v ~/.cache/golangci-lint/v1.50.1:/root/.cache -w /app golangci/golangci-lint:v1.50.1 golangci-lint run -v --timeout 5m
+
 build-container-server:
 	podman build -t wejick/alive-server:$(server-version) -f dockerfile.server .
 
 build-container-agent:
 	podman build -t wejick/alive-agent:$(agent-version) -f dockerfile.agent .
+
