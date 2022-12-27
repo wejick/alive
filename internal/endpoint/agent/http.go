@@ -42,9 +42,13 @@ func (A *Agent) GetAgentHandler(w http.ResponseWriter, r *http.Request, ps httpr
 // param: json of agent
 func (A *Agent) AddAgentHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	agentParam := model.Agent{}
-	json.NewDecoder(r.Body).Decode(&agentParam)
+	err := json.NewDecoder(r.Body).Decode(&agentParam)
+	if err != nil {
+		_ = httputil.ResponseError(err.Error(), http.StatusBadRequest, w)
+		return
+	}
 
-	err := A.AgentService.AddAgent(agentParam)
+	err = A.AgentService.AddAgent(agentParam)
 
 	if err != nil {
 		_ = httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)

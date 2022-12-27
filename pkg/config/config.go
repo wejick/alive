@@ -75,7 +75,7 @@ func LoadConfig(path string) (config Config, err error) {
 	defer F.Close()
 
 	jsonDecoder := json.NewDecoder(F)
-	jsonDecoder.Decode(&config)
+	err = jsonDecoder.Decode(&config)
 
 	return
 }
@@ -153,7 +153,7 @@ func modeltoTestConfig(testList []model.Test) (testConfig []Test) {
 			Body:               testM.Body,
 			ExpectedStatusCode: testM.ExpectedStatusCode,
 		})
-		json.Unmarshal([]byte(testM.Header), &testConfig[idx].Header)
+		_ = json.Unmarshal([]byte(testM.Header), &testConfig[idx].Header)
 	}
 	return
 }

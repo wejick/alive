@@ -50,9 +50,13 @@ func (T *Test) GetTestHandler(w http.ResponseWriter, r *http.Request, ps httprou
 
 func (T *Test) AddTestHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	testParam := model.Test{}
-	json.NewDecoder(r.Body).Decode(&testParam)
+	err := json.NewDecoder(r.Body).Decode(&testParam)
+	if err != nil {
+		_ = httputil.ResponseError(err.Error(), http.StatusBadRequest, w)
+		return
+	}
 
-	err := T.testService.AddTest(testParam)
+	err = T.testService.AddTest(testParam)
 	if err != nil {
 		_ = httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
 	} else {

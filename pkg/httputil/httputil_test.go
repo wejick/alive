@@ -1,7 +1,7 @@
 package httputil
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,7 +18,7 @@ func TestResponseJSON(t *testing.T) {
 	w := httptest.NewRecorder()
 	handler(w, req)
 	resp := w.Result()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		assert.FailNow(t, err.Error())
 	}
@@ -34,7 +34,7 @@ func TestResponseJSON(t *testing.T) {
 	w = httptest.NewRecorder()
 	handler(w, req)
 	resp = w.Result()
-	body, err = ioutil.ReadAll(resp.Body)
+	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		assert.FailNow(t, err.Error())
 	}

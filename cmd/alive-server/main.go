@@ -55,9 +55,9 @@ func main() {
 	metricRuntime.Init()
 
 	c := cron.New()
-	c.AddFunc("@every 20m", func() {
+	_, _ = c.AddFunc("@every 20m", func() {
 		//TODO log the error
-		healthcheckHandler.UpdateHealthStatus()
+		_ = healthcheckHandler.UpdateHealthStatus()
 	})
 	c.Start()
 

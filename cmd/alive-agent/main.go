@@ -41,14 +41,17 @@ func main() {
 		fmt.Println("Remote config fetched from :", globalConfig.ServerAddress)
 	}
 	httpPingFunc := func() {
-		cfgLoader.Ping()
+		err = cfgLoader.Ping()
+		if err != nil {
+			fmt.Println("Can't ping:" + err.Error())
+		}
 	}
 
 	httpConfigLoaderFunc()
 	httpPingFunc()
 	c := cron.New()
-	c.AddFunc("@every 30s", httpConfigLoaderFunc)
-	c.AddFunc("@every 30s", httpPingFunc)
+	_, _ = c.AddFunc("@every 30s", httpConfigLoaderFunc)
+	_, _ = c.AddFunc("@every 30s", httpPingFunc)
 	c.Start()
 
 	metricRuntime := metric.New()
