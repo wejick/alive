@@ -12,7 +12,7 @@ import (
 func TestResponseJSON(t *testing.T) {
 	// null status ok
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		ResponseJSON(nil, http.StatusOK, w)
+		_ = ResponseJSON(nil, http.StatusOK, w)
 	}
 	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
@@ -29,7 +29,7 @@ func TestResponseJSON(t *testing.T) {
 
 	// interface status 500
 	handler = func(w http.ResponseWriter, r *http.Request) {
-		ResponseError("Not OK", http.StatusInternalServerError, w)
+		_ = ResponseError("Not OK", http.StatusInternalServerError, w)
 	}
 	w = httptest.NewRecorder()
 	handler(w, req)

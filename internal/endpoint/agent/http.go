@@ -35,7 +35,7 @@ func (A *Agent) GetAgentHandler(w http.ResponseWriter, r *http.Request, ps httpr
 	agentResponse := AgentHttpResponse{}
 	agentResponse.AgentList = A.AgentService.GetAgents(ids)
 
-	httputil.ResponseJSON(agentResponse, 200, w)
+	_ = httputil.ResponseJSON(agentResponse, 200, w)
 }
 
 // AddAgentHandler http handler for add agent
@@ -47,9 +47,9 @@ func (A *Agent) AddAgentHandler(w http.ResponseWriter, r *http.Request, ps httpr
 	err := A.AgentService.AddAgent(agentParam)
 
 	if err != nil {
-		httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
+		_ = httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
 	} else {
-		httputil.ResponseError("", http.StatusAccepted, w)
+		_ = httputil.ResponseError("", http.StatusAccepted, w)
 	}
 }
 
@@ -58,8 +58,8 @@ func (A *Agent) PingAgentHandler(w http.ResponseWriter, r *http.Request, ps http
 	id := r.URL.Query().Get("id")
 	err := A.AgentService.Ping(id)
 	if err != nil {
-		httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
+		_ = httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
 	} else {
-		httputil.ResponseError("", http.StatusAccepted, w)
+		_ = httputil.ResponseError("", http.StatusAccepted, w)
 	}
 }

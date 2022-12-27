@@ -43,7 +43,10 @@ func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []model.Agent) {
 	defer rows.Close()
 	for rows.Next() {
 		agent := model.Agent{}
-		rows.Scan(&agent.ID, &agent.Location, &agent.GeoHash, &agent.ISP, &agent.Status)
+		err = rows.Scan(&agent.ID, &agent.Location, &agent.GeoHash, &agent.ISP, &agent.Status)
+		if err != nil {
+			break
+		}
 		agent.StatusText = model.GetAgentStatusText(model.AgentStatus(agent.Status))
 		agentList = append(agentList, agent)
 	}

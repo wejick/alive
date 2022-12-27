@@ -41,11 +41,11 @@ func (T *Test) GetTestHandler(w http.ResponseWriter, r *http.Request, ps httprou
 	var err error
 	resp.TestList, err = T.testService.GetTest(ids, agentStr, int64(rows), int64(page))
 	if err != nil {
-		httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
+		_ = httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
 		return
 	}
 
-	httputil.ResponseJSON(resp, 200, w)
+	_ = httputil.ResponseJSON(resp, 200, w)
 }
 
 func (T *Test) AddTestHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -54,8 +54,8 @@ func (T *Test) AddTestHandler(w http.ResponseWriter, r *http.Request, ps httprou
 
 	err := T.testService.AddTest(testParam)
 	if err != nil {
-		httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
+		_ = httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
 	} else {
-		httputil.ResponseError("", http.StatusAccepted, w)
+		_ = httputil.ResponseError("", http.StatusAccepted, w)
 	}
 }
