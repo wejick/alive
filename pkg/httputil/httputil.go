@@ -12,10 +12,10 @@ type StandardError struct {
 }
 
 type Page struct {
-	TotalData   int `json:"total_data"`
-	TotalPage   int `json:"total_page"`
-	TotalInPage int `json:"total_in_page"`
-	Page        int `json:"page"`
+	TotalData   int64 `json:"total_data"`
+	TotalPage   int64 `json:"total_page"`
+	TotalInPage int64 `json:"total_in_page"`
+	Page        int64 `json:"page"`
 }
 
 type Header struct {

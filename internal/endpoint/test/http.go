@@ -45,7 +45,23 @@ func (T *Test) GetTestHandler(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	_ = httputil.ResponseJSON(resp, 200, w)
+	totalTest, err := T.testService.GetTotalTest()
+	if err != nil {
+		_ = httputil.ResponseError(err.Error(), http.StatusInternalServerError, w)
+		return
+	}
+
+	totalPage := int64(1)
+	if rows > 0 {
+		totalPage = totalTest / int64(rows)
+	}
+	pageInfo := httputil.Page{
+		TotalData:   totalTest,
+		TotalPage:   totalPage,
+		TotalInPage: int64(len(resp.TestList)),
+		Page:        int64(page),
+	}
+	_ = httputil.ResponseJsonPage(resp, "", http.StatusOK, pageInfo, w)
 }
 
 func (T *Test) AddTestHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

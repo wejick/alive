@@ -5,6 +5,13 @@ import (
 	repoAgent "github.com/wejick/alive/internal/repo/agent"
 )
 
+type IAgent interface {
+	AddAgent(model.Agent) error
+	GetAgents([]string) []model.Agent
+	Ping(string) error
+	UpdateHealthStatus() error
+}
+
 type Agent struct {
 	agentRepo repoAgent.IAgent
 }
