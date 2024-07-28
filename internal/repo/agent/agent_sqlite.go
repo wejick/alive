@@ -21,6 +21,11 @@ func NewSqlite(sqliteDB *sql.DB) (agent *AgentSqlite) {
 	return
 }
 
+// GetAllAgents get all agents
+func (A *AgentSqlite) GetAllAgents() (agentList []model.Agent) {
+	return A.GetAgents([]string{})
+}
+
 // GetAgents get 1 or more agent by id, empty array means get all agent
 func (A *AgentSqlite) GetAgents(agentIDs []string) (agentList []model.Agent) {
 	agentList = []model.Agent{}
@@ -63,6 +68,23 @@ func (A *AgentSqlite) AddAgent(agent model.Agent) (err error) {
 		return
 	}
 	_, err = tx.Exec(query, agent.Location, agent.GeoHash, agent.ISP, agent.Status)
+	if err != nil {
+		return
+	}
+	err = tx.Commit()
+
+	return
+}
+
+// DeleteAgent removes an agent from the db byID.
+func (A *AgentSqlite) DeleteAgent(agentID int) (err error) {
+	query := "DELETE FROM agent WHERE id = ?"
+
+	tx, err := A.db.BeginTx(context.Background(), nil)
+	if err != nil {
+		return
+	}
+	_, err = tx.Exec(query, agentID)
 	if err != nil {
 		return
 	}
