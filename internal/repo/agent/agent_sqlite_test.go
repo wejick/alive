@@ -107,9 +107,9 @@ func TestAgentSqlite_AddAgent(t *testing.T) {
 			name:   "select 1",
 			fields: fields{db: sqldb},
 			args: args{agent: model.Agent{
-				Location: "kediri",
-				GeoHash:  "yyyykdr",
-				ISP:      "kediri net",
+				Location: "Kediri",
+				GeoHash:  "qqxg2mvr8c7n",
+				ISP:      "KDR_ISP",
 			}},
 		},
 	}
@@ -120,6 +120,16 @@ func TestAgentSqlite_AddAgent(t *testing.T) {
 			}
 			if err := A.AddAgent(tt.args.agent); (err != nil) != tt.wantErr {
 				t.Errorf("AgentSqlite.AddAgent() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			// clean up
+			agents := A.GetAllAgents()
+			for _, agent := range agents {
+				if agent.Location == tt.args.agent.Location &&
+					agent.GeoHash == tt.args.agent.GeoHash &&
+					agent.ISP == tt.args.agent.ISP {
+					A.DeleteAgent(int(agent.ID))
+				}
 			}
 		})
 	}
