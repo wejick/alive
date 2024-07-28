@@ -128,7 +128,10 @@ func TestAgentSqlite_AddAgent(t *testing.T) {
 				if agent.Location == tt.args.agent.Location &&
 					agent.GeoHash == tt.args.agent.GeoHash &&
 					agent.ISP == tt.args.agent.ISP {
-					A.DeleteAgent(int(agent.ID))
+					err := A.DeleteAgent(int(agent.ID))
+					if err != nil {
+						t.Errorf("AgentSqlite.AddAgent() when clean up error = %v", err)
+					}
 				}
 			}
 		})
