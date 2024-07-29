@@ -5,6 +5,7 @@
 
 rectangle "<$prometheus>\nprometheus" as prometheus
 rectangle "fluentbit" as fluentbit
+rectangle "mqtt" as mqtt
 
 rectangle "<$go>\nalive-agent 1" as agent1
 rectangle "<$go>\nalive-agent 2" as agent2
@@ -22,9 +23,11 @@ agentn <--> server
 server --> sqlite
 
 prometheus <-- fluentbit  : push data prometheus_remote_write
-fluentbit --> agent1 : scrape /metrics
-fluentbit --> agent2 : scrape /metrics
-fluentbit --> agent3 : scrape /metrics
-fluentbit --> agentn : scrape /metrics
+fluentbit --> mqtt
+
+mqtt <--> agent1
+mqtt <--> agent2
+mqtt <--> agent3
+mqtt <--> agentn
 
 @enduml
